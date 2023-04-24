@@ -1,93 +1,217 @@
+const fs = require('fs');
+const FAIL = 0;
+
 class ProductManager {
     #id = 0;
 
-    constructor() {
-        this.products = [];
+    constructor(path) {
+        this.path = path;
+        fs.promises.writeFile(this.path, JSON.stringify([]));
     }
 
     /**
-     * Permite agregar un producto a la lista de productos
-     * @param {string} tittle Nombre del producto
-     * @param {string} description Descripción del producto
-     * @param {number} price Precio del producto
-     * @param {string} thumbnail Ruta de imagen del producto
-     * @param {string} code Código de identificación del producto
-     * @param {number} stock Número de piezas disponibles del producto
+     * Permite agregar un producto persistente
+     * @param {object} product Producto a agregar un producto al array
      */
-    addProduct(tittle, description, price, thumbnail, code, stock) {
-        const product = {
-            tittle,
-            description,
-            price,
-            thumbnail,
-            code,
-            stock,
-        };
+    async addProduct(product) {
+        const {tittle, description, price, thumbnail, code, stock} = product;
 
-        const paramsProduct = Object.values(product);
-        if (paramsProduct.includes(undefined)) {
-            console.log("Error: Para agregar el producto debe completar todos los campos.");
-            return;
+        if (!tittle || !description || !price || !thumbnail || !code || !stock) {
+            console.log("Error: Para agregar el producto debe completar todos los campos: tittle; description; price; thumbnail; code y stock.");
+            return FAIL;
         }
 
-        const productIndex = this.products.findIndex(
-            (prod) => prod.code === code
-        );
+        try {
+            const actualProducts = await this.getProducts();
+            const productIndex = actualProducts.findIndex(
+                (prod) => prod.code === code
+            );
 
-        if (!(productIndex === -1)) {
-            console.log('');
-            console.log(`Error: El producto con código "${code}" ya existe.`);
-            return;
+            if (!(productIndex === -1)) {
+                console.log('');
+                console.log(`Error: El producto con código "${code}" ya existe.`);
+                return FAIL;
+            }
+
+            actualProducts.push(product);
+            product.id = this.#getID();
+
+            await fs.promises.writeFile(
+                this.path,
+                JSON.stringify(actualProducts)
+            );
+
+        } catch (err) {
+            console.log('Error: No se pudo agregar el producto');
         }
-
-        product.id = this.#getID();
-        this.products.push(product);
     }
-    
+
     #getID() {
         this.#id++;
         return this.#id;
     }
 
-    getProducts() {
-        return this.products;
+    async getProducts() {
+        try {
+            const actualProducts = await fs.promises.readFile(
+                this.path,
+                'utf-8'
+            );
+            return JSON.parse(actualProducts);
+        } catch (err) {
+            console.log('Error: No es posible obtener los productos');
+        }
     }
 
-    getProductById(idProduct) {
-        const productIndex = this.products.findIndex(
-            (prod) => prod.id === idProduct
-        );
+    async getProductById(idProduct) {
+        try {
+            const actualProducts = JSON.parse(await fs.promises.readFile(
+                this.path,
+                'utf-8'
+            ));
 
-        if (productIndex === -1) {
-            console.log(`Error: El producto con ID "${idProduct}" no existe.`);
-            return;
+            const productIndex = actualProducts.findIndex(
+                (prod) => prod.id === idProduct
+            );
+
+            if (productIndex === -1) {
+                console.log(`Error: El producto con ID "${idProduct}" no existe.`);
+                return FAIL;
+            }
+
+            const product = actualProducts[productIndex];
+            return product;
+
+        } catch (err) {
+            console.log('Error: No es posible obtener el producto buscado por ID.');
+        }
+    }
+
+    async updateProduct(idProduct, updatedProduct) {
+        try {
+            const actualProducts = JSON.parse(await fs.promises.readFile(
+                this.path,
+                'utf-8'
+            ));
+
+            const productIndex = actualProducts.findIndex(
+                (prod) => prod.id === idProduct
+            );
+
+            if (productIndex === -1) {
+                console.log(`Error: El producto con ID "${idProduct}" no existe.`);
+                return FAIL;
+            }
+
+            const newProduct = {
+                ...actualProducts[productIndex],
+                ...updatedProduct
+            };
+
+            actualProducts[productIndex] = newProduct;
+            await fs.promises.writeFile(
+                this.path,
+                JSON.stringify(actualProducts)
+            );
+            return actualProducts;
+
+        } catch (err) {
+            console.log('Error: No pude actualizar el producto.');
+        }
+    }
+
+    async deleteProduct(idProduct) {
+        try {
+            const actualProducts = JSON.parse(await fs.promises.readFile(
+                this.path,
+                'utf-8'
+            ));
+
+            const productIndex = actualProducts.findIndex(
+                (prod) => prod.id === idProduct
+            );
+
+            if (productIndex === -1) {
+                console.log(`Error: El producto con ID "${idProduct}" no existe.`);
+                return FAIL;
+            }
+
+            const filteredProducts = actualProducts.filter((prod) => {
+                return prod.id != idProduct;
+            })
+
+            await fs.promises.writeFile(
+                this.path,
+                JSON.stringify(filteredProducts)
+            );
+
+            return filteredProducts;
+
+        } catch (err) {
+            console.log('Error: No puedo eliminar el producto.');
         }
 
-        const product = this.products[productIndex];
-        console.log(`El producto es:`);
-        console.log(product)
     }
 }
 
 /*------------------------------------Testing----------------------------------------------*/
 
 // Creación de instancia de ProductManager
-const pm = new ProductManager();
-//Llamado a getProducts con la instancia recién creada
-const prod1 = pm.getProducts()
-console.log(prod1)
-//Llamado al método "addProduct" para agregar diferentes productos
-pm.addProduct("mate", "verde", 1500, "sin imagen", "abc123", 150);
-pm.addProduct("parlante", "azul", 3000, "sin imagen", "ad32", 60);
-pm.addProduct("vaso", "violeta", 800, "sin imagen", "gaf43", 700);
-//Llamado a "getproducts" para visualizar los productos agregados
-const prod2 = pm.getProducts()
-console.log(prod2)
-//intento agregar un producto repetido y llamo a "getproduct" para verificar que no se agregó
-pm.addProduct("mate", "verde", 1500, "sin imagen", "abc123", 150);
-const prod3 = pm.getProducts()
-console.log(prod3)
-//Busco un producto por ID con éxito
-const prodID = pm.getProductById(2);
-//Busco un producto por ID con fallo
-const prodID2 = pm.getProductById(20);
+const pm = new ProductManager("./products.json");
+const test = async () => {
+    try {
+        //Llamado a getProducts() con la instancia recién creada
+        console.log(await pm.getProducts());
+        //Llamado al método "addProduct" para agregar diferentes productos
+        await pm.addProduct({
+            tittle: "mate",
+            description: "verde",
+            price: 1500,
+            thumbnail: "sin imagen",
+            code: "abc123",
+            stock: 150,
+        });
+        await pm.addProduct({
+            tittle: "parlante",
+            description: "azul",
+            price: 2900,
+            thumbnail: "sin imagen",
+            code: "afg121",
+            stock: 36,
+        });
+        await pm.addProduct({
+            tittle: "cinta",
+            description: "naranja",
+            price: 5260,
+            thumbnail: "sin imagen",
+            code: "aasdad",
+            stock: 4,
+        });
+        //Llamado a getProducts() con la instancia recién creada
+        console.log(await pm.getProducts());
+        // //Busco un producto por ID con éxito
+        console.log(await pm.getProductById(2));
+        // //Busco un producto por ID con fallo
+        console.log(await pm.getProductById(6));
+        //Actualización de los campos descripción y stock del producto con ID 1
+        console.log(await pm.updateProduct(1, {
+            description: "azul",
+            stock: 300,
+        }));
+        //Actualización de los campos descripción y stock del producto con ID no existente
+        console.log(await pm.updateProduct(7, {
+            description: "verde",
+            price: 6000,
+            stock: 1,
+        }));
+        // Elimino producto con ID = 3
+        console.log(await pm.deleteProduct(2));
+        // Elimino producto con ID no existente
+        console.log(await pm.deleteProduct(8));
+    } catch (err) {
+        // Si hay error imprimo el error en consola
+        console.log('Error: El test no se pudo realizar con éxito');
+    }
+};
+
+test();
