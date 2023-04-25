@@ -1,12 +1,14 @@
-const fs = require('fs');
+import fs from 'fs';
 const FAIL = 0;
 
-class ProductManager {
+export default class ProductManager {
     #id = 0;
 
     constructor(path) {
         this.path = path;
-        fs.promises.writeFile(this.path, JSON.stringify([]));
+        if (!fs.existsSync(this.path)) {
+            fs.writeFileSync(this.path, JSON.stringify([]));
+        }
     }
 
     /**
@@ -14,7 +16,7 @@ class ProductManager {
      * @param {object} product Producto a agregar un producto al array
      */
     async addProduct(product) {
-        const {tittle, description, price, thumbnail, code, stock} = product;
+        const { tittle, description, price, thumbnail, code, stock } = product;
 
         if (!tittle || !description || !price || !thumbnail || !code || !stock) {
             console.log("Error: Para agregar el producto debe completar todos los campos: tittle; description; price; thumbnail; code y stock.");
@@ -214,4 +216,4 @@ const test = async () => {
     }
 };
 
-test();
+// test();
