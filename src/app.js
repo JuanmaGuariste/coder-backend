@@ -32,7 +32,6 @@ app.get('/products/:pid', async (req, res) => {
         let id = Number(req.params.pid)
 		let product = await productManager.getProductById(id);       
         if (!product){
-            // res.send(`<p ${error.idError}`);
             res.send(`<p style="color: red; font-size: 30px; margin: 10px;"> ${error.idError}</p>`);
         } else {
             res.send(product);
