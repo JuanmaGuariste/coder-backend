@@ -1,0 +1,196 @@
+/* input, select {
+	width: 100%;
+	height: 40px;
+	border: 1px solid #00b658;
+	border-radius: 5px;
+	padding: 0 10px;
+	font-size: 16px;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+}
+
+button {
+	width: 100%;
+	height: 40px;
+	border: 1px solid #00b658;
+	border-radius: 5px;
+	padding: 0 10px;
+	font-size: 16px;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+	background-color: #00b658;
+	color: #fff;
+}
+
+#historial {
+	width: 100%;
+	height: calc(100vh - 140px);
+	border: 1px solid #00b658;
+	border-radius: 5px;
+	padding: 0 10px;
+	font-size: 16px;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+	overflow-y: scroll;
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 
+
+.form-title {
+	font-size: 24px;
+	font-weight: bold;
+  }
+    
+  .product-form {
+	margin-bottom: 20px;
+  }
+  
+  .product-form input,
+  .product-form select {
+	display: block;
+	margin-bottom: 10px;
+	width: 300px;
+	padding: 5px;
+  }
+  
+  .product-form button {
+	padding: 5px 10px;
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	cursor: pointer;
+  }
+  
+  #historial {
+	margin-top: 20px;
+  }
+  
+  #totalProducts {
+	font-weight: bold;
+  } */
+
+
+
+
+
+
+
+.form-container {
+	display: flex;
+	gap: 20px;
+	border: 1px solid black;
+}
+
+.form-wrapper {
+	flex: 1;
+	margin-left: auto;
+}
+#add-product-form, #delete-product-form{
+	margin-left: 10%;
+}
+
+.form-title {
+	font-size: 24px;
+	font-weight: bold;
+	margin-left: 10%;
+}
+
+.product-form {
+	margin-bottom: 20px;
+}
+
+.product-form input,
+.product-form select {
+	display: block;
+	margin-bottom: 10px;
+	width: 300px;
+	padding: 5px;
+}
+
+.product-form button {
+	padding: 5px 10px;
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	cursor: pointer;
+	margin-left: 115px;
+}
+
+#historial {
+	margin-top: 20px;
+}
+
+#totalProducts {
+	font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.title {
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.product-list {
+	list-style-type: none;
+	padding: 0;
+}
+
+.product-list li {
+	margin-bottom: 20px;
+	border: 1px solid #ccc;
+	padding: 10px;
+}
+
+.product-list p {
+	margin: 5px 0;
+}
+
+
+.product-container {
+	border: 1px solid #ccc;
+	padding: 10px;
+	margin-bottom: 10px;
+  }
+  
+  .product-container h2 {
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 5px;
+  }
+  
+  .product-container p {
+	margin: 5px 0;
+  }
+
+  

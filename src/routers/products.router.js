@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import ProductManager from '../models/ProductManager.js';
+import ProductController from '../controllers/ProductController.js';
 
-const productManager = new ProductManager("./products.json");
+const productController = new ProductController("./products.json");
 const productsRouter = Router();
 
 productsRouter.get("/", async (req, res) => {
     try {
         let limit = req.query.limit;
-        let allProducts = await productManager.getProducts();
+        let allProducts = await productController.getProducts();
         if (!limit) {
             res.send({ status: "succes", payload: allProducts });
         } else {
@@ -22,7 +22,7 @@ productsRouter.get("/", async (req, res) => {
 productsRouter.get("/:pid", async (req, res) => {
     try {
         let id = Number(req.params.pid)
-        let product = await productManager.getProductById(id);
+        let product = await productController.getProductById(id);
         if (!product) {
             res.status(400).send({ status: "error", error: `El producto no existe`})            
         } else {
@@ -35,8 +35,7 @@ productsRouter.get("/:pid", async (req, res) => {
 
 productsRouter.post('/', async (req, res) => {
     try {
-        let prodComplete = await productManager.addProduct(req.body);
-        console.log(prodComplete)
+        let prodComplete = await productController.addProduct(req.body);
         if (prodComplete) {
             res.send({ status: "succes", payload: req.body });
         } else {
@@ -50,7 +49,7 @@ productsRouter.post('/', async (req, res) => {
 productsRouter.put('/:pid', async (req, res) => {
     try {
         let id = Number(req.params.pid);
-        let prodUpdated = await productManager.updateProduct(id, req.body);
+        let prodUpdated = await productController.updateProduct(id, req.body);
         if (prodUpdated) {
             res.send({ status: "succes", payload: req.body });
         } else {
@@ -64,7 +63,7 @@ productsRouter.put('/:pid', async (req, res) => {
 productsRouter.delete('/:pid', async (req, res) => {
     try {
         let id = Number(req.params.pid);
-        let existProduct = await productManager.deleteProduct(id);
+        let existProduct = await productController.deleteProduct(id);
         if (existProduct) {
             res.send({ status: "succes", payload: id });
         } else {

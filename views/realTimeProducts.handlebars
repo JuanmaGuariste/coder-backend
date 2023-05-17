@@ -1,0 +1,89 @@
+{{!-- <h2 class="form-title">Agregar un nuevo producto:</h2>
+
+<form id="add-product-form" class="product-form"></form>
+<input type='text' required id='title' name='title' placeholder='Título' />
+<input type='text' required id='description' name='description' placeholder='Descripción' />
+<input type='text' required id='category' name='category' placeholder='Categoría' />
+<input type='number' required id='price' name='price' placeholder='Precio' />
+<input type='text' required id='thumbnail' name='thumbnail' placeholder='Imagenes' />
+<input type='text' required id='code' name='code' placeholder='Código' />
+<input type='number' required id='stock' name='stock' placeholder='Stock' />
+<select required id='status' name='status' placeholder='Estado'>
+    <option value='true'>true</option>
+    <option value='false'>false</option>
+</select>
+<button id='send' onclick="sendProduct()">Enviar</button>
+</form>
+
+<form id="delete-product-form" class="product-form">
+    <input type='text' required id='id' name='id' placeholder='id' />
+    <button id='send' onclick="deleteProduct()">Eliminar</button>
+</form>
+
+<div id='historial'>
+    <div id='totalProducts'></div>
+</div> --}}
+
+{{!-- OPCION 2 --}}
+{{!-- <h2 class="form-title">Agregar un nuevo producto:</h2>
+
+<form id="add-product-form" class="product-form">
+    <input type="text" required id="title" name="title" placeholder="Título" />
+    <input type="text" required id="description" name="description" placeholder="Descripción" />
+    <input type="text" required id="category" name="category" placeholder="Categoría" />
+    <input type="number" required id="price" name="price" placeholder="Precio" />
+    <input type="text" required id="thumbnail" name="thumbnail" placeholder="Imagenes" />
+    <input type="text" required id="code" name="code" placeholder="Código" />
+    <input type="number" required id="stock" name="stock" placeholder="Stock" />
+    <select required id="status" name="status" placeholder="Estado">
+        <option value="true">true</option>
+        <option value="false">false</option>
+    </select>
+    <button id="send" onclick="sendProduct()">Enviar</button>
+</form>
+<h2 class="form-title">Eliminar producto por ID:</h2>
+<form id="delete-product-form" class="product-form">
+    <input type="text" required id="id" name="id" placeholder="id" />
+    <button id="send" onclick="deleteProduct()">Eliminar</button>
+</form>
+
+<div id="historial">
+    <div id="totalProducts"></div>
+</div> --}}
+{{!-- OPCION 3 --}}
+
+
+<div class="form-container">
+    <div class="form-wrapper">
+        <h2 class="form-title">Agregar un nuevo producto:</h2>
+        <form id="add-product-form" class="product-form">
+            <input type="text" required id="title" name="title" placeholder="Título" />
+            <input type="text" required id="description" name="description" placeholder="Descripción" />
+            <input type="text" required id="category" name="category" placeholder="Categoría" />
+            <input type="number" required id="price" name="price" placeholder="Precio" />
+            <input type="text" required id="thumbnail" name="thumbnail" placeholder="Imagenes" />
+            <input type="text" required id="code" name="code" placeholder="Código" />
+            <input type="number" required id="stock" name="stock" placeholder="Stock" />
+            <select required id="status" name="status" placeholder="Estado">
+                <option value="true">true</option>
+                <option value="false">false</option>
+            </select>
+            <button id="send" onclick="sendProduct()">Enviar</button>
+        </form>
+    </div>
+
+    <div class="form-wrapper">
+        <h2 class="form-title">Eliminar un producto por ID:</h2>
+        <form id="delete-product-form" class="product-form">
+            <input type="text" required id="id" name="id" placeholder="ID" />
+            <button id="send" onclick="deleteProduct()">Eliminar</button>
+        </form>
+    </div>
+</div>
+
+<div id="historial">
+    <div id="totalProducts"></div>
+</div>
+
+<script src='/socket.io/socket.io.js'></script>
+<script src='/js/main.js'></script>
