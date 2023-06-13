@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary justify-content-center" data-bs-theme="dark">
+    <ul class="nav justify-content-center">
+        <li class="nav-item">
+            <a class="nav-link" href="/products">Productos</a>
+        </li>
+        <li class="nav-item">
+            <select class="form-select" aria-label="Default select example">
+                <option selected>Todos los productos</option>
+                <option value="1">Electrónica</option>
+                <option value="2">Bazar</option>
+                <option value="3">librería</option>
+            </select>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/carts/{{_id}}">Carrito</a>
+        </li>
+    </ul>
+</nav>
+
+<div><br /></div>
+<div class='container'>
+
+    <div class='row'>
+        {{#each products}}
+        <div class="card my-3 mx-1" style="width: 18rem;">
+            <figure class="figure">
+                <img src="https://dummyimage.com/300" class="figure-img img-fluid rounded" alt="Imagen del producto.">
+            </figure>
+            <div class="card-body">
+                <h5 class="card-title">{{this.product.title}}</h5>
+                <p class="card-text">{{this.product.description}}</p>
+                <p class="card-text">Categoría: {{this.product.category}}</p>
+                <button class="btn btn-danger" onclick="deleteProductFromCart('{{this.product._id}}')">Quitar del
+                    carrito</button>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
+<script src='/js/main.js'></script>

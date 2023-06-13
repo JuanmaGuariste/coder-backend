@@ -5,12 +5,12 @@ class CartDAO {
         this.model = cartModel;
     }
 
-    async getAll() {
+    async getAllCarts() {
         return await this.model.find();
     }
 
     async getCartById(cid) {
-        return await this.model.findOne({ _id: cid }).populate('products.product');
+        return await this.model.findOne({ _id: cid }).populate('products.product').lean();
     }
 
     async addProductToCart(pid, cid) {
@@ -40,6 +40,39 @@ class CartDAO {
             throw new Error('Missing required fields');
         }
         return await this.model.deleteOne({ _id: cid });
+    }
+
+    async deleteProductFromCart(pid, cid) {
+        return await this.model.findOneAndUpdate(
+            { _id: cid },
+            { $pull: { products: { product: pid } } },
+            { new: true }
+        );
+    }
+
+    async deleteCartContent(cid) {
+        return await this.model.findOneAndUpdate(
+            { _id: cid },
+            { $pull: { products: {} } },
+            { new: true }
+        );
+    }
+    
+    async updateCart(cid, prod) {
+        let cart = await this.model.findOne({ _id: cid });
+        cart.products = [];
+        for (let i = 0; i < prod.length; i++){
+            cart.products.push(prod[i]);
+        }
+        return await this.model.updateOne({ _id: cid }, cart);      
+    }
+    
+    async updateProductInCart(pid, cid, newCant) {
+        return await this.model.findOneAndUpdate(
+            { _id: cid, "products.product": pid },
+            { $set: { "products.$.cant": newCant} },
+            { new: true }
+        );
     }
 }
 

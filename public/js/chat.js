@@ -32,7 +32,7 @@ inputMSJ.addEventListener('keyup', (event) => {
 	if (event.key === 'Enter') {
 		let msj = inputMSJ.value;
 		if (msj.trim().length > 0) {
-			socket.emit('message', { user, msj });			
+			socket.emit('message', { user, msj });
 			inputMSJ.value = '';
 		}
 	}

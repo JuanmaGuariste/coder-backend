@@ -1,5 +1,71 @@
 const socket = io();
 
+async function createCart() {
+	return await fetch('http://localhost:8080/api/carts',
+		{
+			method: 'POST'
+		})
+		.then(response => response.json())
+		.then(cart => {
+			return cart.payload._id;
+		})
+		.catch(error => {
+			console.error('Error al crear el carrito:', error);
+		});
+}
+
+async function getCartID() {
+	let cid = JSON.parse(localStorage.getItem('carrito'));
+	if (!cid) {
+		cid = await createCart();
+		localStorage.setItem('carrito', JSON.stringify(cid));
+	}
+	return cid
+}
+
+async function addProductToCart(pid) {
+	let cid = await getCartID()
+	const response = await fetch(`http://localhost:8080/api/carts/${cid}/product/${pid}`, {
+		method: 'POST'
+	});
+
+	if (response.ok) {
+		Swal.fire({
+			title: 'Producto agregado',
+			icon: 'success'
+		});
+	} else {
+		Swal.fire({
+			title: 'Error al agregar el producto',
+			text: 'Hubo un problema al agregar el producto al carrito',
+			icon: 'error'
+		});
+	}
+}
+
+async function deleteProductFromCart(pid) {
+	let cid = await getCartID();
+	const response = await fetch(`http://localhost:8080/api/carts/${cid}/product/${pid}`, {
+		method: 'DELETE'
+	});
+
+	if (response.ok) {
+		Swal.fire({
+			title: 'Producto quitado del carrito',
+			icon: 'warning'
+		})
+			.then(() => {
+				window.location.reload();
+			})
+	} else {
+		Swal.fire({
+			title: 'Error al quitar el producto del carrito',
+			text: 'Hubo un problema al quitar el producto del carrito',
+			icon: 'error'
+		});
+	}
+}
+
 function sendProduct() {
 	const product = {}
 	product.title = document.getElementById('title').value;

@@ -5,8 +5,49 @@ class ProductDAO {
         this.model = productModel;
     }
 
-    async getAll() {
-        return await this.model.find().lean();
+    async getAllProducts(limit = 10, page = 1, category = false, status = false, sort = false) {
+        let filter = {}
+        let options = {
+            lean: true,
+            page,
+            limit,
+        }
+        let link = `?limit=${limit}`
+
+        if (category) {
+            filter = { ...filter, category }
+            link = link + `&category=${category}`
+        }
+        if (status) {
+            filter = { ...filter, status }
+            link = link + `&status=${status}`
+        }
+        if (sort === "asc") {
+            options = { ...options, sort: { price: 1 } }
+            link = link + `&sort=asc`
+        } else if (sort === "desc") {
+            options = { ...options, sort: { price: -1 } }
+            link = link + `&sort=desc`
+
+        }
+
+        let products = await this.model.paginate(filter, options);
+
+        if (products.hasNextPage) {
+            products.nextLink = link + `&page=${products.nextPage}`
+        } else {
+            products.nextLink = null;
+        }
+
+        if (products.hasPrevPage) {
+            products.prevLink = link + `&page=${products.prevPage}`
+        } else {
+            products.prevLink = null;
+        }
+
+        products.category = category;
+        products.category = category;
+        return products
     }
 
     async getProductById(pid) {
