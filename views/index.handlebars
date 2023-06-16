@@ -1,15 +1,19 @@
-<h1 class="title">Lista de productos</h1>
-<ul class="product-list">
-    {{#each product}}
-    <li>
-        <p>ID: {{this._id}}</p>
-        <p>title: {{this.title}}</p>
-        <p>Descripción: {{this.description}}</p>
-        <p>Categoría: {{this.category}}</p>
-        <p>Precio: {{this.price}}</p>
-        <p>Código: {{this.code}}</p>
-        <p>Stock: {{this.stock}}</p>
-        <p>Status: {{this.status}}</p>
-    </li>
-    {{/each}}
-</ul>
+<section class='container'>
+	<div class='row bg-light login-section'>
+		<div class='col-4'>
+			<img src='{{user.img}}' alt='logo' class='img-fluid my-2'/>
+		</div>
+		<div class='col-8' style='padding: 50px 20px;'>
+			<h1>Hola, {{user.first_name}} {{user.last_name}}</h1>
+
+			<p>Datos personales</p>
+
+			<ul>
+				<li><b>Nombre: </b>{{user.first_name}}</li>
+				<li><b>Apellido: </b>{{user.last_name}}</li>
+				<li><b>Correo: </b>{{user.email}}</li>
+				<li><b>Rol: </b>{{user.rol}}</li>
+			</ul>
+		</div>
+	</div>
+</section>
