@@ -2,19 +2,23 @@ import userModel from "./models/user.model.js";
 
 class UserDAO {
     constructor() {
-        this.userModel = userModel;
+        this.model = userModel;
     }
 
     async getAllUsers() {
-        return await this.userModel.find();
+        return await this.model.find();
     }  
     
     async getUserByEmail(email) {
-        return await this.userModel.findOne({ email: email });
+        return await this.model.findOne({ email: email });
     }
 
     async createUser(user) {
-        return await this.userModel.create(user);
+        return await this.model.create(user);
+    }
+
+    async getUserById(id) {
+        return await this.model.findById(id);
     }
 
 }

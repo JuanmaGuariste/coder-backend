@@ -51,13 +51,18 @@ viewsRouter.get('/chat', isAuth, (req, res) => {
 
 viewsRouter.get('/register', isGuest, (req, res) => {
 	res.render('register', {
-		title: 'Registrar Nuevo Usuario',
+		title: 'Registrar nuevo usuario',
+	});
+});
+viewsRouter.get('/registerError', isGuest, (req, res) => {
+	res.render('registerError', {
+		title: 'Error al registrar nuevo usuario',
 	});
 });
 
 viewsRouter.get('/login', isGuest, (req, res) => {
 	res.render('login', {
-		title: 'Inicio de Sesión',
+		title: 'Inicio de sesión',
 	});
 });
 

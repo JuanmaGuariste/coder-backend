@@ -15,7 +15,6 @@ export default class CartController {
             }
         }
     }
-
     async addCart() {
         try {
             let cart = { "products": [] }
@@ -30,7 +29,6 @@ export default class CartController {
             console.log('Error: No se pudo agregar el carrito');
         }
     }
-
     async getCarts() {
         try {
             const actualCarts = await fs.promises.readFile(
@@ -42,27 +40,21 @@ export default class CartController {
             console.log('Error: No es posible obtener los carritos');
         }
     }
-
     async getCartById(idCart) {
         try {
             const actualCarts = JSON.parse(await fs.promises.readFile(
                 this.path,
                 'utf-8'
             ));
-
             const cartIndex = actualCarts.findIndex(
                 (item) => item.id === idCart
             );
-
             if (cartIndex === -1) {
                 console.log(`Error: El producto con ID "${idCart}" no existe.`);
                 return FAIL;
             }
-
             let cart = actualCarts[cartIndex]
-
             return cart;
-
         } catch (err) {
             console.log('Error: No es posible obtener el producto buscado por ID.');
         }
@@ -74,19 +66,15 @@ export default class CartController {
                 this.path,
                 'utf-8'
             ));
-
             const cartIndex = actualCarts.findIndex(
                 (item) => item.id === idCart
             );
-
             if (cartIndex === -1) {
                 console.log(`Error: El producto con ID "${idCart}" no existe.`);
                 return FAIL;
             }
-
             const cart = actualCarts[cartIndex];
             const existProduct = cart.products.some((item) => item.product === idProduct);
-
             if (existProduct) {
                 cart.products.forEach((item) => {
                     if (item.product === idProduct) {
@@ -96,17 +84,13 @@ export default class CartController {
             } else {
                 const newProduct = { "product": idProduct, "quantity": 1 }
                 cart.products.push(newProduct);
-            }            
-
+            }
             actualCarts[cartIndex] = cart;
-
             await fs.promises.writeFile(
                 this.path,
                 JSON.stringify(actualCarts)
             );
-
             return cart;
-
         } catch (err) {
             console.log('Error: No es posible obtener el producto buscado por ID.');
         }

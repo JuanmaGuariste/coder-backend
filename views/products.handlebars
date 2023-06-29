@@ -1,6 +1,4 @@
 <div><br /></div>
-
-
 <div class='container'>
     <p class="wellcome-text">Bienvenido, {{user.first_name}} {{user.last_name}}</p>
     <p class="wellcome-text">Email: {{user.email}}</p>
@@ -58,74 +56,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-{{!-- <div class='container'>
-
-    <div class='row'>
-        {{#each products.docs}}
-        <div class="card my-3 mx-2" style="width: 18rem;">
-            <figure class="figure">
-                <img src="https://dummyimage.com/300" class="figure-img img-fluid rounded" alt="Imagen del producto.">
-            </figure>
-            <div class="card-body">
-                <h5 class="card-title">{{this.title}}</h5>
-                <p class="card-text">{{this.description}}</p>
-                <p class="card-text">Categoría: {{this.category}}</p>
-                <p class="card-text">Categoría: {{this._id}}</p>
-                <button class="btn btn-success my-3" onclick="addProductToCart('{{this._id}}')">Agregar al
-                    carrito</button>
-                <button class="btn btn-danger" onclick="deleteProductFromCart('{{this._id}}')">Quitar del
-                    carrito</button>
-            </div>
-        </div>
-        {{/each}}
-        <div class="d-flex justify-content-center">
-            <nav>
-                <ul class="pagination">
-                    {{#if products.hasPrevPage}}
-                    <li class="page-item">
-                        <a class="page-link" href="{{products.prevLink}}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    {{else}}
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    {{/if}}
-                    <li class="page-item"><a class="page-link" href="#">{{products.page}}</a></li>
-                    {{#if products.hasNextPage}}
-                    <li class="page-item">
-                        <a class="page-link" href="{{products.nextLink}}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                    {{else}}
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                    {{/if}}
-                </ul>
-            </nav>
-        </div>
-    </div>
-</div> --}}
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
 <script src='/js/main.js'></script>
