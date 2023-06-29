@@ -59,6 +59,11 @@ viewsRouter.get('/registerError', isGuest, (req, res) => {
 		title: 'Error al registrar nuevo usuario',
 	});
 });
+viewsRouter.get('/loginError', isGuest, (req, res) => {
+	res.render('loginError', {
+		title: 'Error al iniciar sesión',
+	});
+});
 
 viewsRouter.get('/login', isGuest, (req, res) => {
 	res.render('login', {
