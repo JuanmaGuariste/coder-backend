@@ -1,19 +1,19 @@
 import { Router } from 'express';
-import productDAO from '../dao/ProductDAO.js';
-import cartDAO from '../dao/CartDAO.js'
-import { isAuth, isGuest } from '../dao/middleware/auth.middleware.js';
+import productDAO from '../dao/mongo/ProductDAO.js';
+import cartDAO from '../dao/mongo/CartDAO.js';
+import { middlewarePassportJWT } from '../middleware/jwt.middleware.js';
 
 const viewsRouter = Router();
 
-viewsRouter.get('/products', isAuth, async (req, res) => {
+viewsRouter.get('/products', middlewarePassportJWT, async (req, res) => {
     const { limit, page, category, status, sort } = req.query;
-    const { user } = req.session;
-    delete user.password;  
+    const user = req.user;
     try {
-        let products = await productDAO.getAllProducts(limit, page, category, status, sort);        
+
+        let products = await productDAO.getAllProducts(limit, page, category, status, sort);
         res.render('products', {
             products,
-            user,            
+            user,
         });
     }
     catch (err) {
@@ -21,63 +21,72 @@ viewsRouter.get('/products', isAuth, async (req, res) => {
     }
 });
 
-viewsRouter.get("/carts/:cid", isAuth, async (req, res) => {
-    let id = req.params.cid;
-    const { user } = req.session;
-    delete user.password;
+viewsRouter.get("/carts/:cid", middlewarePassportJWT, async (req, res) => {
+    let id = req.params.cid.replace(/^'|'$/g, '');   
+    const user = req.user;
     try {
-        let cart = await cartDAO.getCartById(id);        
-
-        res.render('carts', {
-            cart,
-            user,            
-        });
+        let cart = await cartDAO.getCartById(id);
+        res.render('carts',
+            {
+                title: 'Cart',
+                cart,
+                user,
+            });
     } catch (err) {
         res.status(500).send({ status: "error", error: err })
     }
 });
 
-viewsRouter.get('/realtimeproducts', isAuth, (req, res) => {
-    const { user } = req.session;
-    delete user.password;
+viewsRouter.get('/realtimeproducts', middlewarePassportJWT, (req, res) => {
+    const { user } = req.user;
     res.render('realTimeProducts', {
-        user,            
+        user,
     });
 });
 
-viewsRouter.get('/chat', isAuth, (req, res) => {
+viewsRouter.get('/chat', middlewarePassportJWT, (req, res) => {
     res.render('chat');
 });
 
-viewsRouter.get('/register', isGuest, (req, res) => {
-	res.render('register', {
-		title: 'Registrar nuevo usuario',
-	});
+viewsRouter.get('/register', (req, res) => {
+    res.render('register', {
+        title: 'Registrar nuevo usuario',
+    });
 });
-viewsRouter.get('/registerError', isGuest, (req, res) => {
-	res.render('registerError', {
-		title: 'Error al registrar nuevo usuario',
-	});
+viewsRouter.get('/registerError', (req, res) => {
+    res.render('registerError', {
+        title: 'Error al registrar nuevo usuario',
+    });
 });
-viewsRouter.get('/loginError', isGuest, (req, res) => {
-	res.render('loginError', {
-		title: 'Error al iniciar sesión',
-	});
-});
-
-viewsRouter.get('/login', isGuest, (req, res) => {
-	res.render('login', {
-		title: 'Inicio de sesión',
-	});
+viewsRouter.get('/loginError', (req, res) => {
+    res.render('loginError', {
+        title: 'Error al iniciar sesión',
+    });
 });
 
-viewsRouter.get('/', isAuth, (req, res) => {
-	const { user } = req.session;
-	delete user.password;
-	res.render('index', {
-		title: 'Perfil de Usuario',
-		user,
-	});
+viewsRouter.get('/login', (req, res) => {
+    res.render('login', {
+        title: 'Inicio de sesión',
+    });
+});
+
+viewsRouter.get('/', middlewarePassportJWT, (req, res) => {
+
+    if (!req.user) {
+        res.render('login', {
+            title: 'Inicio de sesión',
+        });
+    } else {
+        res.redirect('/products');
+    }
+});
+
+viewsRouter.get('/profile', middlewarePassportJWT, (req, res) => {
+
+    res.render('profile', {
+        title: 'Perfil de Usuario',
+        user: req.user,
+    });
 });
 
 export default viewsRouter;

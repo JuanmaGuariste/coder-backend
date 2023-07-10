@@ -13,10 +13,14 @@
                 <h5 class="card-title">{{this.title}}</h5>
                 <p class="card-text">{{this.description}}</p>
                 <p class="card-text">Categoría: {{this.category}}</p>
-                <p class="card-text">Categoría: {{this._id}}</p>
-                <button class="btn btn-success my-3" onclick="addProductToCart('{{this._id}}')">Agregar al
+                <p class="card-text">ID: {{this._id}}</p>
+                <p class="card-text">ID: {{../user.cart}}</p>
+                <button class="btn btn-success my-3"
+                    onclick="addProductToCart('{{this._id}}', '{{../user.cart}}')">Agregar
+                    al
                     carrito</button>
-                <button class="btn btn-danger" onclick="deleteProductFromCart('{{this._id}}')">Quitar del
+                <button class="btn btn-danger" onclick="deleteProductFromCart('{{this._id}}', '{{../user.cart}}')">Quitar
+                    del
                     carrito</button>
             </div>
         </div>

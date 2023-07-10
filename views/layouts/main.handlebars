@@ -31,7 +31,7 @@
                     </select>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link mx-3" id="cart-link" href="/carts/648cb8fca3f0d9d2fbb36406">Carrito</a>
+                    <a class="nav-link mx-3" id="cart-link" href="/carts/'{{user.cart}}'">Carrito</a>
                 </li>                
             </ul>
             <div class=' justify-content-end' id='navbarSupportedContent'>
@@ -39,7 +39,7 @@
                     <li class='nav-item'>
                         <form action='/api/user/logout' method='post' class='user-form my-0'>
                             <div class='user-info'>
-                                <a class='nav-link active' onclick="window.location.href='/login'" aria-current='page'
+                                <a class='nav-link active' onclick="window.location.href='/profile'" aria-current='page'
                                     href='#'>
                                     <img src='{{user.img}}' class='img-fluid rounded-circle me-1 custom-img' />
                                     {{user.first_name}}
@@ -71,6 +71,4 @@
         integrity='sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe' crossorigin='anonymous'>
         </script>
 </body>
-
-
 </html>

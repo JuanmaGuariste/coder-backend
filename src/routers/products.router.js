@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import productDAO from '../dao/ProductDAO.js';
+import productDAO from '../dao/mongo/ProductDAO.js';
 
 const productsRouter = Router();
 
@@ -8,7 +8,6 @@ productsRouter.get('/', async (req, res) => {
     try {
         let product = await productDAO.getAllProducts(limit, page, category, status, sort);
         res.status(201).send({ status: "success", payload: product })
-        //res.status(200).render('index', product);
     }
     catch (err) {
         res.status(500).send({ status: "error", error: err })

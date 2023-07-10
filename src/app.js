@@ -6,12 +6,14 @@ import { cartsRouter } from './routers/carts.router.js';
 import userRouter from './routers/user.router.js';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
-import productDAO from './dao/ProductDAO.js';
-import chatDAO from './dao/chatDAO.js';
+import productDAO from './dao/mongo/ProductDAO.js';
+import chatDAO from './dao/mongo/ChatDAO.js';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
-import inicializePassport from './dao/config/passport.config.js';
+import inicializePassport from './config/passport.config.js';
 import passport from 'passport';
+import cookieParser from 'cookie-parser';
+import sessionsRouter from './routers/sessions.router.js';
 	
 const app = express();
 let totalProducts = [];
@@ -25,6 +27,15 @@ app.set('views', 'views/');
 app.set('view engine', 'handlebars');
 
 app.use(express.static('public'));
+
+app.use(cookieParser('B2zdY3B$pHmxW%'));
+inicializePassport(app);
+
+app.use(passport.initialize());
+
+mongoose.connect(
+	'mongodb+srv://juanmaguariste:guaripsw@cluster0.d5w82e1.mongodb.net/?retryWrites=true&w=majority'
+);
 
 app.use(
 	session({
@@ -42,18 +53,11 @@ app.use(
 	})
 );
 
-inicializePassport(app);
-app.use(passport.initialize());
-app.use(passport.session());
-
-mongoose.connect(
-	'mongodb+srv://juanmaguariste:guaripsw@cluster0.d5w82e1.mongodb.net/?retryWrites=true&w=majority'
-);
-
 app.use('/', viewsRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/user', userRouter) ;
+app.use('/api/sessions', sessionsRouter) ;
 
 const webServer = app.listen(8080, () => {
 	console.log('Escuchando 8080');
