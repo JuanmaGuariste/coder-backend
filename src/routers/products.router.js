@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import productDAO from '../dao/mongo/ProductDAO.js';
+import productsController from '../controllers/products.controller.js';
 
 const productsRouter = Router();
 
 productsRouter.get('/', async (req, res) => {
     const { limit, page, category, status, sort } = req.query;
     try {
-        let product = await productDAO.getAllProducts(limit, page, category, status, sort);
+        let product = await productsController.getProducts(limit, page, category, status, sort);
         res.status(201).send({ status: "success", payload: product })
     }
     catch (err) {
@@ -17,7 +17,7 @@ productsRouter.get('/', async (req, res) => {
 productsRouter.get('/:pid', async (req, res) => {
     let id = req.params.pid;
     try {
-        const product = await productDAO.getProductById(id);
+        const product = await productsController.getProductById(id);
         res.status(201).send({ status: "success", payload: product })
     }
     catch (err) {
@@ -27,7 +27,7 @@ productsRouter.get('/:pid', async (req, res) => {
 
 productsRouter.post('/', async (req, res) => {
     try {
-        let prodComplete = await productDAO.addProduct(req.body);
+        let prodComplete = await productsController.addProduct(req.body);
         res.status(201).send({ status: "succes", payload: prodComplete });
     } catch (err) {
         res.status(500).send({ status: "error", error: err })
@@ -37,7 +37,7 @@ productsRouter.post('/', async (req, res) => {
 productsRouter.put('/:pid', async (req, res) => {
     let id = req.params.pid;
     try {
-        let prodUpdated = await productDAO.updateProduct(id, req.body);
+        let prodUpdated = await productsController.updateProduct(id, req.body);
         res.status(201).send({ status: "succes", payload: prodUpdated });
     } catch (err) {
         res.status(500).send({ status: "error", error: err })
@@ -47,8 +47,8 @@ productsRouter.put('/:pid', async (req, res) => {
 productsRouter.delete('/:pid', async (req, res) => {
     try {
         let id = req.params.pid;
-        await productDAO.deleteProduct(id);
-        res.status(201).send({ status: "succes", payload: id });
+        let res = await productsController.deleteProduct(id);
+        res.status(201).send({ status: "succes", payload: res });
     } catch (err) {
         res.status(500).send({ status: "error", error: err })
     }

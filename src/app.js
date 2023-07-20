@@ -6,15 +6,16 @@ import { cartsRouter } from './routers/carts.router.js';
 import userRouter from './routers/user.router.js';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
-import productDAO from './dao/mongo/ProductDAO.js';
-import chatDAO from './dao/mongo/ChatDAO.js';
+import productsController from './controllers/products.controller.js';
+import chatsController from './controllers/chats.controller.js';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import inicializePassport from './config/passport.config.js';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import sessionsRouter from './routers/sessions.router.js';
-	
+import enviroment from './config/enviroment.js';
+
 const app = express();
 let totalProducts = [];
 let messages = [];
@@ -33,15 +34,12 @@ inicializePassport(app);
 
 app.use(passport.initialize());
 
-mongoose.connect(
-	'mongodb+srv://juanmaguariste:guaripsw@cluster0.d5w82e1.mongodb.net/?retryWrites=true&w=majority'
-);
+mongoose.connect(enviroment.MONGO_URL);
 
 app.use(
 	session({
 		store: MongoStore.create({
-			mongoUrl:
-				'mongodb+srv://juanmaguariste:guaripsw@cluster0.d5w82e1.mongodb.net/?retryWrites=true&w=majority',
+			mongoUrl: enviroment.MONGO_URL,
 			mongoOptions: {
 				useNewUrlParser: true,
 			},
@@ -59,21 +57,15 @@ app.use('/api/carts', cartsRouter);
 app.use('/api/user', userRouter) ;
 app.use('/api/sessions', sessionsRouter) ;
 
-const webServer = app.listen(8080, () => {
-	console.log('Escuchando 8080');
+const webServer = app.listen(enviroment.PORT, () => {
+	console.log(`Escuchando puerto ${enviroment.PORT}`);
 });
-
 const io = new Server(webServer);
 
 io.on('connection', async (socket) => {
-	let limit = 10;
-	let page= 1;
-	let category = false;
-	let status = false;
-	let sort = false;
 	try {
-		totalProducts = await productDAO.getProducts(limit, page, category, status, sort)
-		messages = await chatDAO.getAllMessages()
+		totalProducts = await productsController.getAllProducts()
+		messages = await chatsController.getAllMessages()
 	} catch (err) {
 		console.log(err)
 	}
@@ -82,8 +74,9 @@ io.on('connection', async (socket) => {
 
 	socket.on('new-product', async (product) => {
 		try {
-			await productDAO.addProduct(product)
-			totalProducts = await productDAO.getProducts(limit, page, category, status, sort)
+			await productsController.addProduct(product)
+			totalProducts = await productsController.getAllProducts()
+			console.log(totalProducts)
 		} catch (err) {
 			console.log(err)
 		}
@@ -92,8 +85,8 @@ io.on('connection', async (socket) => {
 
 	socket.on('delete-product', async (prodId) => {
 		try {
-			await productDAO.deleteProduct(prodId)
-			totalProducts = await productDAO.getProducts(limit, page, category, status, sort)
+			await productsController.deleteProduct(prodId)
+			totalProducts = await productsController.getAllProducts()
 		} catch (err) {
 			console.log(err)
 		}
@@ -103,8 +96,8 @@ io.on('connection', async (socket) => {
 	socket.emit('messages', messages);
 
 	socket.on('message', async (message) => {
-		await chatDAO.addMessage(message)
-		messages = await chatDAO.getAllMessages()
+		await chatsController.addMessage(message)
+		messages = await chatsController.getAllMessages()
 		io.emit('messages', messages);
 	});
 

@@ -90,4 +90,3 @@ socket.on('totalProducts', (data) => {
 	});
 	document.getElementById('totalProducts').innerHTML = html.join('');
 });
-

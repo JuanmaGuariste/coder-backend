@@ -29,7 +29,7 @@ const middlewarePassportJWT = async (req, res, next) => {
 		if (!usr) {
 			res.redirect('/login');
 		}
-		req.user = usr;
+		req.user = usr;        
 		next();
 	})(req, res, next);
 };
