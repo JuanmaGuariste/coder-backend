@@ -6,38 +6,38 @@ class CartsController {
 		this.service = new CartsService(cartDAO);
 	}
 
-	getCarts() {
-		return this.service.getCarts();
+	async getCarts() {
+		return await this.service.getCarts();
 	}
 
-	addCart() {
-		return this.service.addCart();
+	async addCart() {
+		return await this.service.addCart();
 	}
-    addProductToCart(pid, cid) {
-        return this.service.addProductToCart(pid, cid);
+    async addProductToCart(pid, cid) {
+        return await this.service.addProductToCart(pid, cid);
     }
 
-    deleteProductFromCart(pid, cid) {
-        return this.service.deleteProductFromCart(pid, cid);
+    async deleteProductFromCart(pid, cid) {
+        return await this.service.deleteProductFromCart(pid, cid);
     }
 
-    deleteCartContent(cid) {
-        return this.service.deleteCartContent(cid);
+    async deleteCartContent(cid) {
+        return await this.service.deleteCartContent(cid);
     }
 
-    updateProductInCart(pid, cid, newCant ) {
-        return this.service.updateProductInCart(pid, cid, newCant);
+    async updateProductInCart(pid, cid, newCant ) {
+        return await this.service.updateProductInCart(pid, cid, newCant);
     }
 
-	getCartById(id) {
-		return this.service.getCartById(id);
+	async getCartById(id) {
+		return await this.service.getCartById(id);
 	}
-	deleteCart(id) {
-		return this.service.deleteCart(id);
+	async deleteCart(id) {
+		return await this.service.deleteCart(id);
 	}
 
-	updateCart(id, cart) {
-		return this.service.updateCart(id, cart);
+	async updateCart(id, cart) {
+		return await this.service.updateCart(id, cart);
 	}
 }
 

@@ -27,7 +27,6 @@ userRouter.get(
 	(req, res) => {
 		req.session.user = req.user;
 		let user = req.session.user
-		console.log("Req session: ", req.session.user)
 		const token = jwt.sign({ user }, 'privateKey', { expiresIn: '1h' });
 		res.cookie('token', token, {
 			httpOnly: true,
@@ -56,7 +55,6 @@ userRouter.post('/login', async (req, res) => {
 				password: password,
 				img: "https://pbs.twimg.com/profile_images/1465705281279590405/1yiTdkKj_400x400.png",
 				rol: "admin",
-				cart: [],
 				_id: "coder",
 			};
 		} else {

@@ -76,7 +76,6 @@ io.on('connection', async (socket) => {
 		try {
 			await productsController.addProduct(product)
 			totalProducts = await productsController.getAllProducts()
-			console.log(totalProducts)
 		} catch (err) {
 			console.log(err)
 		}

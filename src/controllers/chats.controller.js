@@ -6,12 +6,12 @@ class ChatsController {
 		this.service = new ChatsService(chatDAO);
 	}
     
-	getAllMessages() {
-        return this.service.getAllMessages();
+	async getAllMessages() {
+        return await this.service.getAllMessages();
     }
 
-    addMessage(chat) {
-        return this.service.addMessage(chat);
+    async addMessage(chat) {
+        return await this.service.addMessage(chat);
     }	
 }
 

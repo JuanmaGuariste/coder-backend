@@ -3,11 +3,11 @@ export default class ChatsService {
 		this.dao = dao;
 	}
 
-    getAllMessages() {
-        return this.dao.getAllMessages();
+    async getAllMessages() {
+        return await this.dao.getAllMessages();
     }
 
-    addMessage(chat) {
-        return this.dao.addMessage(chat);    
+    async addMessage(chat) {
+        return await this.dao.addMessage(chat);    
     }	
 }

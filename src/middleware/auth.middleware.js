@@ -13,3 +13,17 @@ export function isGuest(req, res, next) {
 		res.redirect('/');
 	}
 }
+export function isUser(req, res, next) {
+	if ((req.user.rol === 'user')) {
+		next();
+	} else {
+		res.redirect('/');
+	}
+}
+export function isAdmin(req, res, next) {	
+	if ((req.user.rol === 'admin')) {
+		next();
+	} else {
+		res.redirect('/');
+	}
+}

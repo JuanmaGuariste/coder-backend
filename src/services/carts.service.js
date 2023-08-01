@@ -3,39 +3,39 @@ export default class CartsService {
 		this.dao = dao;
 	}
 
-	getCarts() {
-		return this.dao.getCarts();
+	async getCarts() {
+		return await this.dao.getCarts();
 	}
 
-	addCart() {
-		return this.dao.addCart();
+	async addCart() {
+		return await this.dao.addCart();
 	}
 
-    addProductToCart(pid, cid) {
-        return this.dao.addProductToCart(pid, cid);
+    async addProductToCart(pid, cid) {
+        return await this.dao.addProductToCart(pid, cid);
     }
 
-    deleteProductFromCart(pid, cid) {
-        return this.dao.deleteProductFromCart(pid, cid);
+    async deleteProductFromCart(pid, cid) {
+        return await this.dao.deleteProductFromCart(pid, cid);
     }
 
-    deleteCartContent(cid) {
-        return this.dao.deleteCartContent(cid);
+    async deleteCartContent(cid) {
+        return await this.dao.deleteCartContent(cid);
     }
 
-    updateProductInCart(pid, cid, newCant ) {
-        return this.dao.updateProductInCart(pid, cid, newCant);
+    async updateProductInCart(pid, cid, newCant ) {
+        return await this.dao.updateProductInCart(pid, cid, newCant);
     }
 
-	deleteCart(id) {
-		return this.dao.deleteCart(id);
+	async deleteCart(id) {
+		return await this.dao.deleteCart(id);
 	}
 
-	updateCart(id, cart) {
-		return this.dao.updateCart(id, cart);
+	async updateCart(id, cart) {
+		return await this.dao.updateCart(id, cart);
 	}
 
-	getCartById(id) {		
-		return this.dao.getCartById(id);
+	async getCartById(id) {		
+		return await this.dao.getCartById(id);
 	}
 }

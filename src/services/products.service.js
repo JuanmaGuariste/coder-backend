@@ -3,27 +3,27 @@ export default class ProductsService {
 		this.dao = dao;
 	}
 
-	getProducts(limit, page, category, status, sort) {
-		return this.dao.getProducts(limit, page, category, status, sort);
+	async getProducts(limit, page, category, status, sort) {
+		return await this.dao.getProducts(limit, page, category, status, sort);
 	}
 
-	getAllProducts() {
-        return this.dao.getAllProducts();
+	async getAllProducts() {
+        return await this.dao.getAllProducts();
     }
 
-	addProduct(product) {
-		return this.dao.addProduct(product);
+	async addProduct(product) {
+		return await this.dao.addProduct(product);
 	}
 
-	deleteProduct(id) {
-		return this.dao.deleteProduct(id);
+	async deleteProduct(id) {
+		return await this.dao.deleteProduct(id);
 	}
 
-	updateProduct(id, product) {
-		return this.dao.updateProduct(id, product);
+	async updateProduct(id, product) {
+		return await this.dao.updateProduct(id, product);
 	}
 
-	getProductById(id) {		
-		return this.dao.getProductById(id);
+	async getProductById(id) {		
+		return await this.dao.getProductById(id);
 	}
 }

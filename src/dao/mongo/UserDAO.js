@@ -20,7 +20,8 @@ class UserDAO {
     }
 
     async getUserById(id) {
-        return await this.model.findById(id);
+        let user = await this.model.findById(id);
+        return user;
     }
 }
 

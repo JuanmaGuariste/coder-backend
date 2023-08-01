@@ -25,7 +25,6 @@ const middlewarePassportJWT = async (req, res, next) => {
 		if (err) {
 			next(err);
 		}
-
 		if (!usr) {
 			res.redirect('/login');
 		}

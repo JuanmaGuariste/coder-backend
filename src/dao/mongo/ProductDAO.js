@@ -1,5 +1,4 @@
 import productModel from '../models/products.model.js';
-//Persistencia - servicios - controlador - rutas - vistas
 class ProductDAO {
     constructor() {
         this.model = productModel;
@@ -28,7 +27,6 @@ class ProductDAO {
         } else if (sort === "desc") {
             options = { ...options, sort: { price: -1 } }
             link = link + `&sort=desc`
-
         }
 
         let products = await this.model.paginate(filter, options);

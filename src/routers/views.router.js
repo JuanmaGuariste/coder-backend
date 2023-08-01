@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import cartsController from '../controllers/carts.controller.js';
 import { middlewarePassportJWT} from '../middleware/jwt.middleware.js';
+import { isUser, isAdmin } from '../middleware/auth.middleware.js';
 import productsController from '../controllers/products.controller.js';
+import usersController from '../controllers/users.controller.js';
 
 const viewsRouter = Router();
 
@@ -37,15 +39,18 @@ viewsRouter.get("/carts/:cid", middlewarePassportJWT, async (req, res) => {
     }
 });
 
-viewsRouter.get('/realtimeproducts', middlewarePassportJWT, (req, res) => {
-    const { user } = req.user;
+viewsRouter.get('/realtimeproducts', middlewarePassportJWT, isAdmin, (req, res) => {
+    const user  = req.user;
     res.render('realTimeProducts', {
         user,
     });
 });
 
-viewsRouter.get('/chat', middlewarePassportJWT, (req, res) => {
-    res.render('chat');
+viewsRouter.get('/chat', middlewarePassportJWT, isUser, async (req, res) => {
+    const user = req.user;
+    res.render('chat', {
+        user,
+    });
 });
 
 viewsRouter.get('/register', (req, res) => {
@@ -83,12 +88,20 @@ viewsRouter.get('/', middlewarePassportJWT, (req, res) => {
     }
 });
 
-viewsRouter.get('/profile', middlewarePassportJWT, (req, res) => {
-
-    res.render('profile', {
-        title: 'Perfil de Usuario',
-        user: req.user,
-    });
+viewsRouter.get('/current', middlewarePassportJWT, async (req, res) => {
+    let user = await usersController.getUserById(req.user._id);   
+    if(!user) {
+        user = req.user;
+        res.render('profile', {
+            title: 'Perfil de Usuario',
+            user,
+        });
+    } else {
+        res.render('profile', {
+            title: 'Perfil de Usuario',
+            user,
+        });      
+    }
 });
 
 export default viewsRouter;

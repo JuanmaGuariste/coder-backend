@@ -11,12 +11,8 @@
 		</div>
 		<div class='col-8' style='padding: 50px 20px;'>
 			<h1>Hola, {{user.first_name}} {{user.last_name}}</h1>
-
-			<p>Datos personales</p>
-
-			<ul>
-				{{#if user.first_name}}<li><b>Nombre: </b>{{user.first_name}}</li>{{/if}}
-				{{#if user.last_name}}<li><b>Apellido: </b>{{user.last_name}}</li>{{/if}}
+			<p>Datos personales</p>			
+			<ul>				
 				{{#if user.email}}<li><b>Correo: </b>{{user.email}}</li>{{/if}}
 				{{#if user.age}}<li><b>Edad: </b>{{user.age}}</li>{{/if}}
 				{{#if user.rol}}<li><b>Rol: </b>{{user.rol}}</li>{{/if}}

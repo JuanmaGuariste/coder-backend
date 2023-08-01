@@ -19,27 +19,39 @@
                 <span class="band-name">pSoon</span>
             </a>
             <ul class="navbar-nav justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link mx-3" href="/products">Productos</a>
-                </li>
-                <li class="nav-item mx-3">
-                    <select class="form-select" aria-label="Default select example">
-                        <option selected>Todos los productos</option>
-                        <option value="1">Electrónica</option>
-                        <option value="2">Bazar</option>
-                        <option value="3">librería</option>
-                    </select>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-3" id="cart-link" href="/carts/'{{user.cart}}'">Carrito</a>
-                </li>                
-            </ul>
+                {{#if user.cart }}
+                    <li class="nav-item">
+                        <a class="nav-link mx-3" href="/products">Productos</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <select class="form-select" aria-label="Default select example">
+                            <option selected>Todos los productos</option>
+                            <option value="1">Electrónica</option>
+                            <option value="2">Bazar</option>
+                            <option value="3">librería</option>
+                        </select>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-3" id="cart-link" href="/carts/'{{user.cart}}'">Carrito</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-3" id="cart-link" href="/chat">Chat</a>
+                    </li>
+                {{else}}   
+                    <li class="nav-item">
+                        <a class="nav-link mx-3" href="/products">Ver productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-3" href="/realtimeproducts">Actualizar productos</a>
+                    </li>             
+                </ul>
+                {{/if}}
             <div class=' justify-content-end' id='navbarSupportedContent'>
                 <ul class='navbar-nav'>
                     <li class='nav-item'>
                         <form action='/api/user/logout' method='post' class='user-form my-0'>
                             <div class='user-info'>
-                                <a class='nav-link active' onclick="window.location.href='/profile'" aria-current='page'
+                                <a class='nav-link active' onclick="window.location.href='/current'" aria-current='page'
                                     href='#'>
                                     <img src='{{user.img}}' class='img-fluid rounded-circle me-1 custom-img' />
                                     {{user.first_name}}

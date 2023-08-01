@@ -6,26 +6,26 @@ class ProductsController {
 		this.service = new ProductsService(productDAO);
 	}
 
-	getProducts(limit, page, category, status, sort) {
-		return this.service.getProducts(limit, page, category, status, sort);
+	async getProducts(limit, page, category, status, sort) {
+		return await this.service.getProducts(limit, page, category, status, sort);
 	}
-	getAllProducts() {
-		return this.service.getAllProducts();
-	}
-
-	addProduct(product) {
-		return this.service.addProduct(product);
+	async getAllProducts() {
+		return await this.service.getAllProducts();
 	}
 
-	getProductById(id) {
-		return this.service.getProductById(id);
-	}
-	deleteProduct(id) {
-		return this.service.deleteProduct(id);
+	async addProduct(product) {
+		return await this.service.addProduct(product);
 	}
 
-	updateProduct(id, product) {
-		return this.service.updateProduct(id, product);
+	async getProductById(id) {
+		return await this.service.getProductById(id);
+	}
+	async deleteProduct(id) {
+		return await this.service.deleteProduct(id);
+	}
+
+	async updateProduct(id, product) {
+		return await this.service.updateProduct(id, product);
 	}
 }
 

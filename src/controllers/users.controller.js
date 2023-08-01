@@ -6,20 +6,20 @@ class UsersController {
 		this.service = new UsersService(userDAO);
 	}
     
-    getAllUsers() {
-		return this.service.getAllUsers();
+    async getAllUsers() {
+		return await this.service.getAllUsers();
 	}
 
-	createUser(user) {
-		return this.service.createUser(user);
+	async createUser(user) {
+		return await this.service.createUser(user);
 	}
 	
-    getUserById(id) {
-		return this.service.getUserById(id);
+    async getUserById(id) {
+		return await this.service.getUserById(id);
 	}
 
-	getUserByEmail(email) {		
-		return this.service.getUserByEmail(email);
+	async getUserByEmail(email) {		
+		return await this.service.getUserByEmail(email);
 	}
 }
 

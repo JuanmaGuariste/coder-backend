@@ -19,7 +19,6 @@ const inicializePassport = () => {
     }, async (accessToken, refreshToken, profile, done) => {
         try {
             let user = await usersController.getUserByEmail(profile._json.email);
-            console.log("user: ", user)
             if (!user) {
                 let newCart = await cartsController.addCart(); 
                 let newUser = {

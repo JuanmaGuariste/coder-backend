@@ -1,5 +1,6 @@
 <div><br /></div>
 <div class='container'>
+    <button onclick="createTicket('{{user.cart}}')" class='btn btn-success col-12 my-3'>Realizar compra</button>
     <div class='row'>       
         {{#each cart.products}}
         <div class="card my-3 mx-1" style="width: 18rem;">
@@ -17,7 +18,7 @@
             </div>
         </div>
         {{/each}}
-    </div>
+    </div>    
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
