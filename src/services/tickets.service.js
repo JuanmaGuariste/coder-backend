@@ -7,7 +7,7 @@ export default class TicketsService {
 		return await this.dao.getTickets();
 	}
 
-	async addTicket(cid) {
-		return await this.dao.addTicket(cid);
+	async addTicket(ticket) {
+		return await this.dao.addTicket(ticket);
 	}
 }

@@ -13,8 +13,8 @@ class TicketDAO {
     //     return await this.model.findOne({ _id: cid }).populate('products.product').lean();
     // }  
 
-    async addTicket() {        
-        return await this.model.create({});
+    async addTicket(ticket) {        
+        return await this.model.create(ticket);
     }
 }
 

@@ -73,10 +73,26 @@ function deleteProduct() {
 	socket.emit('delete-product', prodId);
 }
 
-async function createTicket(cid){
+async function createTicket(cid) {
 	const response = await fetch(`http://localhost:8080/api/carts/${cid}/purchase`, {
 		method: 'POST'
 	});
+	if (response) {
+		Swal.fire({
+			title: 'Ticket creado',
+			icon: 'success'
+		})
+			.then(() => {
+				window.location.reload();
+			})
+	} else {
+		Swal.fire({
+			title: 'Error al crear el ticket',
+			text: 'Hubo un problema al generar el ticket',
+			icon: 'error'
+		});
+	}
+
 }
 
 socket.on('totalProducts', (data) => {

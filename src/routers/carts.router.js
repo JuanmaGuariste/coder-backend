@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import cartsController from '../controllers/carts.controller.js';
 import ticketsController from '../controllers/tickets.controller.js';
+import { middlewarePassportJWT } from '../middleware/jwt.middleware.js';
 
 const cartsRouter = Router();
 
@@ -78,10 +79,11 @@ cartsRouter.put("/:cid/product/:pid", async (req, res) => {
     }
 });
 
-cartsRouter.post("/:cid/purchase",  async (req, res) => {
+cartsRouter.post("/:cid/purchase",middlewarePassportJWT,  async (req, res) => {
     let cid = req.params.cid;
+    const user = req.user   
     try {        
-        let ticket = await ticketsController.addTicket(cid);
+        let ticket = await ticketsController.addTicket(cid, user);
         res.status(201).send({ status: "success", payload: ticket });
     }
     catch (err) {

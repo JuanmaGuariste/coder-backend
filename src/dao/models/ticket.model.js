@@ -1,17 +1,13 @@
 import mongoose from 'mongoose';
 
 const ticketSchema = mongoose.Schema({
-    code: {
-		type: String,
-		unique: true,
-		required: true,
-	},
-	// purchase_datetime: {
+    // code: {
 	// 	type: String,
+	// 	unique: true,
 	// 	required: true,
 	// },
 	amount: {
-		type: String,
+		type: Number,
 		required: true,
 	},
 	purchaser: {

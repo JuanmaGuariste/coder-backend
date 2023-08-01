@@ -11,6 +11,9 @@
                 <h5 class="card-title">{{this.product.title}}</h5>
                 <p class="card-text">{{this.product.description}}</p>
                 <p class="card-text">Categoría: {{this.product.category}}</p>
+                <p class="card-text">Stock disponible: {{this.product.stock}}</p>
+                <p class="card-text">Precio: ${{this.product.price}}</p>
+                <p class="card-text">Cantidad seleccionada: {{this.cant}}</p>
                 <button class="btn btn-danger"
                     onclick="deleteProductFromCart('{{this.product._id}}', '{{../user.cart}}')">Quitar
                     del
