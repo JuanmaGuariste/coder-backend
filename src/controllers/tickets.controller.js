@@ -42,9 +42,13 @@ class TicketsController {
 		}		
 		productsOk.forEach(el => {
 			totalPrice += el.cant * el.price
-		})	
+		})
+
+		const timestamp = Date.now().toString();
+		const ticketCode = `TICKET-${timestamp}`;	
+
 		let ticket = {
-			//code: "3",//TODO: Generar codigo aleatorio y único
+			code: ticketCode,
 			amount: totalPrice,
 			purchaser: user.email,
 			
