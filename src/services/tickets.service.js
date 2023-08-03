@@ -10,4 +10,8 @@ export default class TicketsService {
 	async addTicket(ticket) {
 		return await this.dao.addTicket(ticket);
 	}
+
+	async getTicketById(tid) {
+		return await this.dao.getTicketById(tid);
+	}
 }

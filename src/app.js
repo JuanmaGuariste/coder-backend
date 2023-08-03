@@ -15,6 +15,7 @@ import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import sessionsRouter from './routers/sessions.router.js';
 import enviroment from './config/enviroment.js';
+import { mailsRouter } from './routers/mails.router.js';
 
 const app = express();
 let totalProducts = [];
@@ -56,6 +57,7 @@ app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/user', userRouter) ;
 app.use('/api/sessions', sessionsRouter) ;
+app.use('/api/mails', mailsRouter) ;
 
 const webServer = app.listen(enviroment.PORT, () => {
 	console.log(`Escuchando puerto ${enviroment.PORT}`);

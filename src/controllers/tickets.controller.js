@@ -10,7 +10,11 @@ class TicketsController {
 
 	async getTickets() {
 		return await this.service.getTickets();
-	}   
+	}
+
+	async getTicketById(tid) {
+		return await this.service.getTicketById(tid);
+	}
 
 	async addTicket(cid, user) {
 		let productsOk = [];
@@ -19,17 +23,17 @@ class TicketsController {
 
 		let cart = await cartsController.getCartById(cid);
 		for (const el of cart.products) {
-			let prod = await productsController.getProductById(el.product._id);		
+			let prod = await productsController.getProductById(el.product._id);
 			if (prod.stock - el.cant >= 0) {
 				prod.stock -= el.cant;
 				await productsController.updateProduct(prod._id, prod);
-				await cartsController.deleteProductFromCart(el.product._id, cid)				
+				await cartsController.deleteProductFromCart(el.product._id, cid)
 				let prodAuxOk = {
 					title: prod.title,
 					cant: el.cant,
 					price: prod.price
 				};
-				productsOk.push(prodAuxOk);			
+				productsOk.push(prodAuxOk);
 			} else {
 				let prodAuxNotOk = {
 					title: prod.title,
@@ -37,23 +41,26 @@ class TicketsController {
 					stock: prod.stock,
 					price: prod.price
 				};
-				productsNotOk.push(prodAuxNotOk);	
-			}			
-		}		
+				productsNotOk.push(prodAuxNotOk);
+			}
+		}
 		productsOk.forEach(el => {
 			totalPrice += el.cant * el.price
 		})
 
 		const timestamp = Date.now().toString();
-		const ticketCode = `TICKET-${timestamp}`;	
+		const ticketCode = `TICKET-${timestamp}`;
 
 		let ticket = {
 			code: ticketCode,
 			amount: totalPrice,
 			purchaser: user.email,
-			
-		}		
-		await this.service.addTicket(ticket);		
+
+		}
+		ticket = await this.service.addTicket(ticket);
+		await fetch(`http://localhost:8080/api/mails/ticket/${ticket._id}/`, {
+			method: 'GET'
+		});
 		return ticket
 	}
 }

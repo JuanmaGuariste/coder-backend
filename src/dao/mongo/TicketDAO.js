@@ -9,9 +9,9 @@ class TicketDAO {
         return await this.model.find();
     }
 
-    // async getTicketById(cid) {
-    //     return await this.model.findOne({ _id: cid }).populate('products.product').lean();
-    // }  
+    async getTicketById(tid) {
+        return await this.model.findOne({ _id: tid });
+    }  
 
     async addTicket(ticket) {        
         return await this.model.create(ticket);

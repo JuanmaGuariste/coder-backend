@@ -77,9 +77,10 @@ async function createTicket(cid) {
 	const response = await fetch(`http://localhost:8080/api/carts/${cid}/purchase`, {
 		method: 'POST'
 	});
-	if (response) {
+	if (response) {		
 		Swal.fire({
 			title: 'Ticket creado',
+			text: 'Se le ha enviado un mail con el ticket de compra',
 			icon: 'success'
 		})
 			.then(() => {
