@@ -32,7 +32,7 @@ userRouter.get(
 			httpOnly: true,
 			maxAge: 6000000,
 		}).redirect('/products');
-		
+
 	}
 );
 
@@ -43,7 +43,6 @@ userRouter.post('/logout', (req, res) => {
 
 userRouter.post('/login', async (req, res) => {
 	const { email, password } = req.body;
-
 	let user = {};
 	try {
 		if (email === enviroment.ADMIN_NAME && password === enviroment.ADMIN_PASSWORD) {
