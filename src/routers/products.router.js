@@ -2,7 +2,7 @@ import { Router } from 'express';
 import productsController from '../controllers/products.controller.js';
 import CustomErrors from '../tools/CustomErrors.js';
 import EErrors from '../tools/EErrors.js';
-import {generateProductErrorInfo} from '../tools/info.js';
+import { generateProductErrorInfo } from '../tools/info.js';
 
 const productsRouter = Router();
 
@@ -28,16 +28,21 @@ productsRouter.get('/:pid', async (req, res) => {
     }
 })
 
-productsRouter.post('/', async (req, res) => {
+productsRouter.post('/', async (req, res, next) => {
     const { title, description, category, price, thumbnail, code, stock, status } = req.body;
     try {
         if (!title || !description || !category || !price || !thumbnail || !code || !stock || !status) {
-            CustomErrors.createError("Product Creation Error", generateProductErrorInfo(req.body), "Error en datos al crear el producto", EErrors.INVALID_TYPE);
+            CustomErrors.createError({
+                name: "Product Creation Error",
+                cause: generateProductErrorInfo(req.body),
+                message: "Missing required fields",
+                code: EErrors.INVALID_TYPE
+            });
         }
         let prodComplete = await productsController.addProduct(req.body);
         res.status(201).send({ status: "succes", payload: prodComplete });
     } catch (err) {
-        res.status(500).send({ status: "error", error: err })
+        next(err);
     }
 });
 
