@@ -1,7 +1,7 @@
 import EErrors from "../tools/EErrors.js";
 
 export function errorsManagerMiddleware(err, req, res, next) {
-	console.log(err.cause)
+	console.log("Error cause: ", err.cause)	
     switch (err.code) {
 		case EErrors.ROUTING_ERROR:
 			res.status(400).send({ status: 'error', error: err.name });
