@@ -25,7 +25,7 @@ const app = express();
 let totalProducts = [];
 let messages = [];
 
-app.use(loggerMiddleware);
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -57,7 +57,7 @@ app.use(
 		saveUninitialized: true,
 	})
 );
-
+app.use(loggerMiddleware);
 app.use('/', viewsRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
