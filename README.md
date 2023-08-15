@@ -1,6 +1,6 @@
 # coder-backend
 
-## Enviroment variables
+## environment variables
 
 Create a file named `.env` in the root of your project with the following content:
 

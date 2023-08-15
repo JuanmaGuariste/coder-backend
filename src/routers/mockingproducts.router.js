@@ -10,7 +10,7 @@ mockingProductsRouter.get('/', async (req, res) => {
         res.status(201).send({ status: "success", payload: mockingProducts })
     }
     catch (err) {
-        console.log(err)
+        req.logger.error(`Error information: ${err}`);
         res.status(500).send({ status: "error", error: err })
     }
 });
