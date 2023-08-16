@@ -1,7 +1,15 @@
 import EErrors from "../tools/EErrors.js";
 
 export function errorsManagerMiddleware(err, req, res, next) {
-	req.logger.error(`${new Date().toISOString()} - ${req.method} - ${req.url} - [${req.ip}] - ${req.get('user-agent')} - Error information: ${err.cause}`);
+	
+	req.logger.error(`\n
+	Date: ${new Date().toISOString()}\n
+	Method: ${req.method}\n
+	URL: ${req.url}\n
+	IP: [${req.ip}]\n
+	User: ${req.get('user-agent')}\n
+	Error information: ${err.cause}`);
+
     switch (err.code) {
 		case EErrors.ROUTING_ERROR:
 			res.status(400).send({ status: 'error', error: err.name });

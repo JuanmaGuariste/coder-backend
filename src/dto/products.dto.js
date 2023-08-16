@@ -1,8 +1,10 @@
 import CustomErrors from '../tools/CustomErrors.js';
 import EErrors from '../tools/EErrors.js';
-import { generateProductErrorInfo } from '../tools/info.js';
+import { generateProductErrorInfo, generateIDErrorInfo } from '../tools/info.js';
+import productsController from '../controllers/products.controller.js';
+import mongoose from 'mongoose';
 
-export default class isValidProductDTO {
+class isValidProductDTO {
     title;
     description;
     category;
@@ -20,15 +22,30 @@ export default class isValidProductDTO {
         this.thumbnail = product.thumbnail;
         this.code = product.code;
         this.stock = product.stock;
-        this.status = product.status;        
+        this.status = product.status;
 
         if (!this.title || !this.description || !this.category || !this.price || !this.thumbnail || !this.code || !this.stock || !this.status) {
             throw CustomErrors.createError({
                 name: "Product Creation Error",
                 cause: generateProductErrorInfo(product),
                 message: "Missing required fields",
-                code: EErrors.INVALID_TYPE                
-            });           
+                code: EErrors.INVALID_TYPE
+            });
         }
     }
 }
+
+
+async function isValidProductIdDTO(pid) {
+        if (!mongoose.Types.ObjectId.isValid(pid)) {
+            throw CustomErrors.createError({
+                name: "Missing product ID",
+                cause: generateIDErrorInfo(pid),
+                message: "Missing required fields",
+                code: EErrors.INVALID_TYPE
+            });
+        }
+        return pid
+}
+
+export { isValidProductDTO, isValidProductIdDTO }

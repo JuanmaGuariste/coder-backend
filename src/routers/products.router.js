@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import productsController from '../controllers/products.controller.js';
-import isValidProductDTO from '../dto/products.dto.js';
+import { isValidProductDTO, isValidProductIdDTO } from '../dto/products.dto.js';
 
 const productsRouter = Router();
 
@@ -30,19 +30,20 @@ productsRouter.post('/', async (req, res, next) => {
     try {
         const product = new isValidProductDTO(req.body)
         let prodComplete = await productsController.addProduct(product);
-        res.status(201).send({ status: "succes", payload: prodComplete });
+        res.status(201).send({ status: "success", payload: prodComplete });
     } catch (err) {
         next(err);
     }
 });
 
-productsRouter.put('/:pid', async (req, res) => {
+productsRouter.put('/:pid', async (req, res, next) => {
     let id = req.params.pid;
     try {
-        let prodUpdated = await productsController.updateProduct(id, req.body);
-        res.status(201).send({ status: "succes", payload: prodUpdated });
+        const pid = await isValidProductIdDTO(id)
+        let prodUpdated = await productsController.updateProduct(pid, req.body);
+        res.status(201).send({ status: "success", payload: prodUpdated });
     } catch (err) {
-        res.status(500).send({ status: "error", error: err })
+        next(err);
     }
 });
 
@@ -50,7 +51,7 @@ productsRouter.delete('/:pid', async (req, res) => {
     try {
         let id = req.params.pid;
         let res = await productsController.deleteProduct(id);
-        res.status(201).send({ status: "succes", payload: res });
+        res.status(201).send({ status: "success", payload: res });
     } catch (err) {
         res.status(500).send({ status: "error", error: err })
     }
