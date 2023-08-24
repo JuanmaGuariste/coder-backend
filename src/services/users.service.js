@@ -17,13 +17,17 @@ export default class ProductsService {
 		if (id === "coder"){						
 			return null
 		}else {
-			let user =  await this.dao.getUserById(id);			
+			let user = await this.dao.getUserById(id);			
 			return new UserDTO(user)
 		}		 
 	}
 
 	async getUserByEmail(email) {		
 		return await this.dao.getUserByEmail(email);
+	}
+
+	async updateUser(id, user) {
+		return await this.dao.updateUser(id, user);
 	}
 }
 

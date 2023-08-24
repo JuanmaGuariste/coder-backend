@@ -23,6 +23,10 @@ class UserDAO {
         let user = await this.model.findById(id);
         return user;
     }
+
+    async updateUser(id, user) {
+        return await this.model.findByIdAndUpdate(id, user);
+    }
 }
 
 const userDAO = new UserDAO();

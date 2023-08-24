@@ -53,19 +53,14 @@ class MailsController {
                                 <h1>Restauración de contraseña</h1>
                                 <p><strong>Hola,  ${user.first_name}. Hemos recibido tu solicitud de restauración de contraseña.</p>
                                 <p><strong>Haz click en el siguiente enlace para restablecer tu contraseña</strong></p>
-                               <p><a href="${environment.BASE_URL}:${environment.PORT}/api/mails/restore-password/email/${user.email}/psw/${user.password}" style="text-decoration: none; background-color: #007bff; color: #fff; padding: 5px 10px; border-radius: 5px;">Restaurar contraseña</a></p>
+                               <p><a href="${environment.BASE_URL}:${environment.PORT}/restore-password/uid/${user._id}" style="text-decoration: none; background-color: #007bff; color: #fff; padding: 5px 10px; border-radius: 5px;">Restaurar contraseña</a></p>
                                <p><strong>Si no realizaste esta solicitud, puedes ignorar este correo.</p>                             
                             `;
             const mailOptions = {
                 from: `UpSoon Ecommerce <${environment.EMAIL}>`,
                 to: environment.EMAIL,
-                // to: userEmail,
                 subject: 'UpSoon - Restauración de contraseña',
                 html: htmlContent,
-                // attachments: [{
-                //     filename: 'ticket.txt',
-                //     content: htmlContent,
-                // }],
             };
 
             transporter.sendMail(mailOptions, (error, info) => {

@@ -21,6 +21,10 @@ class UsersController {
 	async getUserByEmail(email) {		
 		return await this.service.getUserByEmail(email);
 	}
+
+	async updateUser(id, user) {
+		return await this.service.updateUser(id, user);
+	}
 }
 
 const usersController = new UsersController();
