@@ -12,3 +12,4 @@ ADMIN_NAME=user@user.com
 ADMIN_PASSWORD=password
 EMAIL = google account
 EMAIL_PASSWORD = google account password for aplications
+BASE_URL: http://localhost
