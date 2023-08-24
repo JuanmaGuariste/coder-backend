@@ -71,7 +71,7 @@ viewsRouter.get('/loginError', (req, res) => {
     });
 });
 
-viewsRouter.get('/login', (req, res) => {
+viewsRouter.get('/login', async (req, res) => {
     res.render('login', {
         title: 'Inicio de sesión',
     });

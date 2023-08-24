@@ -17,16 +17,21 @@
 						<input type='password' class='form-control' placeholder='Contraseña' aria-label='Contraseña'
 							name='password' />
 					</div>
-					<button type='submit' class='btn btn-primary col-12'>Ingresar</button>
-					<a
+					<button type='submit' class='btn btn-primary col-12 my-2'>Ingresar</button>
+					<a 
 						href='/api/user/github'
 						type='submit'
-						class='btn btn-primary col-12 btn-github my-3'
+						class='btn btn-primary col-12 btn-github my-2'
 					>Ingresar con GitHub</a>
-					<button type='button' class='btn btn-primary col-12'
+					<button type='button' class='btn btn-primary col-12 my-2'
 						onclick="window.location.href='/register'">Registrarse</button>
+						<button type='button' class="btn btn-primary col-12 my-2 "
+                    onclick="restorePassword()">Olvidé mi contraseña</button>
 				</div>
 			</form>
 		</div>
 	</div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
+<script src='/js/main.js'></script>

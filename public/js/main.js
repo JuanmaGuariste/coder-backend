@@ -77,7 +77,7 @@ async function createTicket(cid) {
 	const response = await fetch(`http://localhost:8080/api/carts/${cid}/purchase`, {
 		method: 'POST'
 	});
-	if (response) {		
+	if (response) {
 		Swal.fire({
 			title: 'Ticket creado',
 			text: 'Se le ha enviado un mail con el ticket de compra',
@@ -95,6 +95,82 @@ async function createTicket(cid) {
 	}
 
 }
+
+async function restorePassword() {
+	// const response = await fetch(`http://localhost:8080/api/carts/${cid}/product/${pid}`, {
+	// 	method: 'POST'
+	// });
+
+	// if (response.ok) 
+
+	const { value: email } = await Swal.fire({
+		title: 'Restauración de contraseña',
+		text: 'Ingrese un email y le enviaremos un link para restaurar la contraseña.',
+		input: 'email',
+		inputPlaceholder: 'Ingrese su dirección de email',
+	})
+
+	if (email) {
+		const response = await fetch(`http://localhost:8080/api/mails/${email}`, {
+			method: 'POST'
+		});
+
+		if (response.ok){
+			Swal.fire(`Link de restauración de contraseña enviado al correo: ${email}`)
+		} else {
+			Swal.fire({
+				title: 'Error al restaurar la contraseña',
+				text: 'Hubo un problema al restaurar la contraseña',
+				icon: 'error'
+			});
+		}
+	}
+
+
+
+
+	//  Swal.fire({
+	// 	title: 'Recuperación de contraseña',
+	// 	// text: 'Ingrese un mail para recuperar la contraseña. Le enviaremos un link para recuperar la contraseña.',
+	// 	input: "text",		
+	// inputAttributes: {
+	// 	autocapitalize: 'off'
+	// },
+	// showCancelButton: true,
+	// confirmButtonText: 'Look up',
+	// showLoaderOnConfirm: true,
+	// 	preConfirm: (login) => {
+	// 		return fetch(`//api.github.com/users/${login}`)
+	// 			.then(response => {
+	// 				if (!response.ok) {
+	// 					throw new Error(response.statusText)
+	// 				}
+	// 				return response.json()
+	// 			})
+	// 			.catch(error => {
+	// 				Swal.showValidationMessage(
+	// 					`Request failed: ${error}`
+	// 				)
+	// 			})
+	// 	},
+	// 	allowOutsideClick: () => !Swal.isLoading()
+	// }).then((result) => {
+	// 	if (result.isConfirmed) {
+	// 		Swal.fire({
+	// 			title: `${result.value.login}'s avatar`,
+	// 			imageUrl: result.value.avatar_url
+	// 		})
+	// 	}
+	// })
+	// } else {
+	// 	Swal.fire({
+	// 		title: 'Error al agregar el producto',
+	// 		text: 'Hubo un problema al agregar el producto al carrito',
+	// 		icon: 'error'
+	// });
+}
+
+
 
 socket.on('totalProducts', (data) => {
 	const html = data.map((elem, index) => {

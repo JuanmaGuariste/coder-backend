@@ -35,8 +35,11 @@ if (environment.ENVIRONMENT === 'development') {
         ],
     });
 } 
+ 
 
-export const loggerMiddleware = (req, res, next) => {
+const loggerMiddleware = (req, res, next) => {
     req.logger = logger;
     next();
 }
+
+export {loggerMiddleware, logger}
