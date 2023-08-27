@@ -7,7 +7,7 @@ import userRouter from './routers/user.router.js';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
-import inicializePassport from './config/passport.config.js';
+import { inicializePassport } from './config/passport.config.js';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import sessionsRouter from './routers/sessions.router.js';

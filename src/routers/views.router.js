@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import cartsController from '../controllers/carts.controller.js';
-import { middlewarePassportJWT} from '../middleware/jwt.middleware.js';
+import { middlewarePassportJWT } from '../middleware/jwt.middleware.js';
 import { isUser, isAdmin } from '../middleware/auth.middleware.js';
 import productsController from '../controllers/products.controller.js';
 import usersController from '../controllers/users.controller.js';
+import environment from '../config/environment.js';
+import Swal from 'sweetalert2';
 
 const viewsRouter = Router();
 
@@ -24,7 +26,7 @@ viewsRouter.get('/products', middlewarePassportJWT, async (req, res) => {
 });
 
 viewsRouter.get("/carts/:cid", middlewarePassportJWT, async (req, res) => {
-    let id = req.params.cid.replace(/^'|'$/g, '');   
+    let id = req.params.cid.replace(/^'|'$/g, '');
     const user = req.user;
     try {
         let cart = await cartsController.getCartById(id);
@@ -40,7 +42,7 @@ viewsRouter.get("/carts/:cid", middlewarePassportJWT, async (req, res) => {
 });
 
 viewsRouter.get('/realtimeproducts', middlewarePassportJWT, isAdmin, (req, res) => {
-    const user  = req.user;
+    const user = req.user;
     res.render('realTimeProducts', {
         user,
     });
@@ -89,8 +91,8 @@ viewsRouter.get('/', middlewarePassportJWT, (req, res) => {
 });
 
 viewsRouter.get('/current', middlewarePassportJWT, async (req, res) => {
-    let user = await usersController.getUserById(req.user._id);   
-    if(!user) {
+    let user = await usersController.getUserById(req.user._id);
+    if (!user) {
         user = req.user;
         res.render('profile', {
             title: 'Perfil de Usuario',
@@ -100,18 +102,33 @@ viewsRouter.get('/current', middlewarePassportJWT, async (req, res) => {
         res.render('profile', {
             title: 'Perfil de Usuario',
             user,
-        });      
+        });
     }
 });
 
-viewsRouter.get("/restore-password/uid/:uid", async (req, res) => {
+viewsRouter.get("/restore-password/uid/:uid/token/:token", async (req, res) => {
     let userId = req.params.uid;
+    let tokenHash = req.params.token;
     try {
-        let newUser = await usersController.getUserById(userId);
-        res.render('restorePassword', {
-            title: 'Restablecer contraseña',
-            newUser
+        const jwt = await import('jsonwebtoken');
+        const secretKey = environment.SECRET_KEY;       
+
+        jwt.default.verify(tokenHash, secretKey, async (err, decoded) => {
+            if (err) {
+                req.logger.error(err)
+                res.render('loginError', {
+                    title: 'Token caducado',
+                });
+            }
+            if (decoded) {
+                let newUser = await usersController.getUserById(userId);
+                res.render('restorePassword', {
+                    title: 'Restablecer contraseña',
+                    newUser
+                });
+            }
         });
+
     } catch (err) {
         res.status(500).send({ status: "error", error: err })
     }

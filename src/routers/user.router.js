@@ -32,7 +32,6 @@ userRouter.get(
 			httpOnly: true,
 			maxAge: 6000000,
 		}).redirect('/products');
-
 	}
 );
 
@@ -59,10 +58,10 @@ userRouter.post('/login', async (req, res) => {
 		} else {
 			user = await usersController.getUserByEmail(email);
 			if (!user) {
-				return res.redirect('/registerError');
+				return res.redirect('/loginError');
 			}
 			if (!bcrypt.compareSync(password, user.password)) {
-				return res.redirect('/registerError');
+				return res.redirect('/loginError');
 			}
 		}
 		const token = jwt.sign({ user }, 'privateKey', { expiresIn: '1h' });
@@ -71,7 +70,7 @@ userRouter.post('/login', async (req, res) => {
 			maxAge: 6000000,
 		}).redirect('/products');
 	} catch (err) {
-		res.redirect('/registerError');
+		res.redirect('/loginError');
 	}
 }
 );

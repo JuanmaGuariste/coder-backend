@@ -17,5 +17,6 @@ export default {
 	ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
 	EMAIL: process.env.EMAIL,
 	EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
-	BASE_URL: process.env.BASE_URL
+	BASE_URL: process.env.BASE_URL,
+	SECRET_KEY: process.env.SECRET_KEY
 };

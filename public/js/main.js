@@ -109,7 +109,7 @@ async function restorePassword() {
 			method: 'POST'
 		});
 
-		if (response.ok){
+		if (response.ok) {
 			Swal.fire(`Link de restauración de contraseña enviado al correo: ${email}`)
 		} else {
 			Swal.fire({
@@ -120,8 +120,6 @@ async function restorePassword() {
 		}
 	}
 }
-
-
 
 socket.on('totalProducts', (data) => {
 	const html = data.map((elem, index) => {

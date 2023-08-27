@@ -1,5 +1,5 @@
 import { Router } from 'express';
-
+import {generateJWTToken} from '../config/passport.config.js';
 const logsRouter = Router();
 
 logsRouter.get('/', async (req, res) => {
@@ -9,7 +9,7 @@ logsRouter.get('/', async (req, res) => {
         req.logger.warn(`${new Date().toISOString()} -  Warning information`);
         req.logger.info(`${new Date().toISOString()} -  Information`);
         req.logger.http(`${new Date().toISOString()} -  HTTP information`);
-        req.logger.debug(`${new Date().toISOString()} -  Debug information`);
+        req.logger.debug(`${new Date().toISOString()} -  Debug information`);      
         res.status(201).send({ status: "success", payload: true })
     } catch (err) {
         res.status(500).send({ status: "error", error: err })

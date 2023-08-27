@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import environment from '../config/environment.js';
 import usersController from './users.controller.js';
 import { logger } from '../middleware/logger.middleware.js';
+import { generateJWTToken } from '../config/passport.config.js';
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -16,7 +17,7 @@ const transporter = nodemailer.createTransport({
 class MailsController {
 
     async createMail(ticketId) {
-        let ticket = await ticketsController.getTicketById(ticketId);
+        let ticket = await ticketsController.getTicketById(ticketId);        
         const htmlContent = `
                             <h1>Detalles del Ticket</h1>
                             <p><strong>Código del Ticket:</strong> ${ticket.code}</p>
@@ -49,16 +50,22 @@ class MailsController {
         if (!user) {
             logger.error(`El usuario no existe: ${user}`);
         } else {
+            let tokenParams = {
+                userId: user._id,
+                username: user.first_name,
+            };
+            let token = await generateJWTToken(tokenParams)            
             const htmlContent = `
                                 <h1>Restauración de contraseña</h1>
                                 <p><strong>Hola,  ${user.first_name}. Hemos recibido tu solicitud de restauración de contraseña.</p>
                                 <p><strong>Haz click en el siguiente enlace para restablecer tu contraseña</strong></p>
-                               <p><a href="${environment.BASE_URL}:${environment.PORT}/restore-password/uid/${user._id}" style="text-decoration: none; background-color: #007bff; color: #fff; padding: 5px 10px; border-radius: 5px;">Restaurar contraseña</a></p>
+                               <p><a href="${environment.BASE_URL}:${environment.PORT}/restore-password/uid/${user._id}/token/${token}" style="text-decoration: none; background-color: #007bff; color: #fff; padding: 5px 10px; border-radius: 5px;">Restaurar contraseña</a></p>
                                <p><strong>Si no realizaste esta solicitud, puedes ignorar este correo.</p>                             
                             `;
             const mailOptions = {
                 from: `UpSoon Ecommerce <${environment.EMAIL}>`,
-                to: environment.EMAIL,
+                to: environment.EMAIL, //TODO: cambiar por user mail
+                // to: user.EMAIL, 
                 subject: 'UpSoon - Restauración de contraseña',
                 html: htmlContent,
             };

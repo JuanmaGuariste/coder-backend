@@ -3,13 +3,22 @@ import GitHubStrategy from 'passport-github2';
 import local from 'passport-local';
 import usersController from '../controllers/users.controller.js';
 import cartsController from '../controllers/carts.controller.js';
-import { hashPassword} from '../utils/encrypt.utils.js';
+import { hashPassword } from '../utils/encrypt.utils.js';
 import jwt from "passport-jwt";
 import { ExtractJwt } from 'passport-jwt';
+import environment from '../config/environment.js';
 
 const jwtStrategy = jwt.Strategy
 const jwtExtract = ExtractJwt;
 const LocalStrategy = local.Strategy;
+
+const generateJWTToken = async (payload) => {
+    const secretKey = environment.SECRET_KEY;
+    const expiresIn = '1h';
+    const jwt = await import('jsonwebtoken')
+    const token = jwt.default.sign(payload, secretKey, { expiresIn });
+    return token;
+}
 
 const inicializePassport = () => {
     passport.use("github", new GitHubStrategy({
@@ -20,15 +29,15 @@ const inicializePassport = () => {
         try {
             let user = await usersController.getUserByEmail(profile._json.email);
             if (!user) {
-                let newCart = await cartsController.addCart(); 
+                let newCart = await cartsController.addCart();
                 let newUser = {
                     first_name: profile._json.name,
                     last_name: "",
-                    email: profile._json.email,                    
+                    email: profile._json.email,
                     password: "",
                     img: profile._json.avatar_url,
                     cart: newCart._id,
-                }                
+                }
                 user = await usersController.createUser(newUser);
                 done(null, user)
             } else {
@@ -47,13 +56,13 @@ const inicializePassport = () => {
         }, async (req, username, password, done) => {
             const { first_name, last_name, img, age } = req.body;
             try {
-                const user = await usersController.getUserByEmail(username);               
+                const user = await usersController.getUserByEmail(username);
                 if (user) {
                     return done(null, false, { message: 'El usuario ya existe' });
                 }
-                const hashedPassword = hashPassword(password);                
-                let newCart = await cartsController.addCart();                
-                let userData =  {
+                const hashedPassword = hashPassword(password);
+                let newCart = await cartsController.addCart();
+                let userData = {
                     first_name,
                     last_name,
                     email: username,
@@ -61,8 +70,8 @@ const inicializePassport = () => {
                     password: hashedPassword,
                     cart: newCart._id,
                     img,
-                }         
-                const newUser = await usersController.createUser(userData);   
+                }
+                const newUser = await usersController.createUser(userData);
                 return done(null, newUser);
             } catch (err) {
                 return done(err);
@@ -85,32 +94,32 @@ const inicializePassport = () => {
     });
 
     passport.use(
-		'jwt',
-		new jwtStrategy(
-			{
-				jwtFromRequest: jwtExtract.fromExtractors([cookieExtractor]),
-				secretOrKey: 'privateKey',
-			},
-			(payload, done) => {                
-				done(null, payload.user);
-			}
-		),
-		async (payload, done) => {
-			try {
-				return done(null, payload);
-			} catch (error) {
-				done(error);
-			}
-		}
-	);    
+        'jwt',
+        new jwtStrategy(
+            {
+                jwtFromRequest: jwtExtract.fromExtractors([cookieExtractor]),
+                secretOrKey: 'privateKey',
+            },
+            (payload, done) => {
+                done(null, payload.user);
+            }
+        ),
+        async (payload, done) => {
+            try {
+                return done(null, payload);
+            } catch (error) {
+                done(error);
+            }
+        }
+    );
 }
 
 const cookieExtractor = (req) => {
-	let token = null;
-	if (req && req.cookies) {
-		token = req.cookies['token'];
-	}
-	return token;
+    let token = null;
+    if (req && req.cookies) {
+        token = req.cookies['token'];
+    }
+    return token;
 };
 
-export default inicializePassport;
+export { inicializePassport, generateJWTToken };
