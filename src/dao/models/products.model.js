@@ -32,12 +32,21 @@ const productSchema = mongoose.Schema({
 	stock: {
 		type: Number,
 		required: true,
-	},
+	},	
 	status: {
 		type: Boolean,
 		required: true,
 		index: true,
 	},
+	owner: {
+        type: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "user",
+            }
+        ],
+        default: "admin",        
+    }
 });
 
 productSchema.plugin(mongoosePaginate);

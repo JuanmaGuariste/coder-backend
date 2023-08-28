@@ -27,7 +27,8 @@ export default class ProductsService {
 	}
 
 	async updateUser(id, user) {
-		return await this.dao.updateUser(id, user);
+		await this.dao.updateUser(id, user);		
+		return await this.dao.getUserById(id);
 	}
 }
 

@@ -54,7 +54,7 @@ app.use(loggerMiddleware);
 app.use('/', viewsRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
-app.use('/api/user', userRouter);
+app.use('/api/users', userRouter);
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/mails', mailsRouter);
 app.use('/api/mockingproducts', mockingProductsRouter);
