@@ -1,6 +1,6 @@
 import CartsService from '../services/carts.service.js';
 import cartDAO from '../dao/mongo/CartDAO.js';
-
+import productsController from './products.controller.js';
 class CartsController {
 	constructor() {
 		this.service = new CartsService(cartDAO);
@@ -13,8 +13,17 @@ class CartsController {
 	async addCart() {
 		return await this.service.addCart();
 	}
-    async addProductToCart(pid, cid) {
-        return await this.service.addProductToCart(pid, cid);
+    async addProductToCart(pid, cid, user) {
+		try{
+			let product = await productsController.getProductById(pid);
+			if(`${user._id}` === `${product.owner}`){
+				return 0
+			}
+			return await this.service.addProductToCart(pid, cid);
+		} catch (err){
+			console.log("ERRROOOORRR", err)
+			req.logger.error(err)
+		}
     }
 
     async deleteProductFromCart(pid, cid) {

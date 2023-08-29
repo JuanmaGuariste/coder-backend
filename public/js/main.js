@@ -18,8 +18,13 @@ async function addProductToCart(pid, cid) {
 	const response = await fetch(`http://localhost:8080/api/carts/${cid}/product/${pid}`, {
 		method: 'POST'
 	});
-
-	if (response.ok) {
+	if (response.status === 403){
+		Swal.fire({
+			title: 'Error al agregar el producto',
+			text: 'No es posible agregar un producto propio al carrito.',
+			icon: 'error'
+		});
+	} else if (response.ok) {
 		Swal.fire({
 			title: 'Producto agregado',
 			icon: 'success'

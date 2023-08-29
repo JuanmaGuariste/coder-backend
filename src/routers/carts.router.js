@@ -24,14 +24,20 @@ cartsRouter.get("/:cid", async (req, res) => {
     }
 });
 
-cartsRouter.post("/:cid/product/:pid",  async (req, res) => {
+cartsRouter.post("/:cid/product/:pid", middlewarePassportJWT, async (req, res) => {
     let cid = req.params.cid;
     let pid = req.params.pid;
+    let user = req.user;
     try {
-        let cart = await cartsController.addProductToCart(pid, cid);
+        let cart = await cartsController.addProductToCart(pid, cid, user);
+        if (!cart) {
+            res.status(403).send({ status: "success", error: "Product owner" })
+            return
+        }
         res.status(201).send({ status: "success", payload: cart });
     }
     catch (err) {
+        console.log("ERRORE", err)
         res.status(500).send({ status: "error", error: err })
     }
 });
