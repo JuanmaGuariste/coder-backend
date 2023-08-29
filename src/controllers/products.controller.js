@@ -20,8 +20,15 @@ class ProductsController {
 	async getProductById(id) {
 		return await this.service.getProductById(id);
 	}
-	async deleteProduct(id) {
-		return await this.service.deleteProduct(id);
+	async deleteProduct(id, user) {
+		let prod = await this.service.getProductById(id);	
+		if (user.rol == "admin" ){
+			return await this.service.deleteProduct(id);
+		} else if ((user.rol == "premium") && (prod.owner == user._id)) {
+			return await this.service.deleteProduct(id);
+		} else {
+			return false
+		}		
 	}
 
 	async updateProduct(id, product) {

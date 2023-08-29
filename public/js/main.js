@@ -55,7 +55,7 @@ async function deleteProductFromCart(pid, cid) {
 	}
 }
 
-function sendProduct() {
+function sendProduct(userId) {
 	const product = {}
 	product.title = document.getElementById('title').value;
 	product.description = document.getElementById('description').value;
@@ -65,12 +65,25 @@ function sendProduct() {
 	product.code = document.getElementById('code').value;
 	product.stock = document.getElementById('stock').value;
 	product.status = document.getElementById('status').value;
+	product.owner = userId;
 	socket.emit('new-product', product);
 }
 
-function deleteProduct() {
-	const prodId = document.getElementById('id').value;
-	socket.emit('delete-product', prodId);
+async function deleteProduct() {
+    const prodId = document.getElementById('id').value;
+    try {
+		
+		let response = await fetch(`http://localhost:8080/api/products/${prodId}`, {
+			method: 'DELETE'
+        })		
+        if (response.ok ) {			
+			await socket.emit('delete-product');
+        } else {
+            console.log('Error al eliminar el producto:', response.statusText);
+        }
+    } catch (error) {
+        console.log('Error al enviar la solicitud de eliminación:', error);
+    }
 }
 
 async function createTicket(cid) {
@@ -134,6 +147,7 @@ socket.on('totalProducts', (data) => {
 		<p>Código: ${elem.code}</p>
 		<p>Stock: ${elem.stock}</p>
 		<p>Estado: ${elem.status}</p>
+		<p>Dueño: ${elem.owner}</p>
 	</div>`;
 	});
 	document.getElementById('totalProducts').innerHTML = html.join('');

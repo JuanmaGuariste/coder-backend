@@ -21,7 +21,7 @@ export function isUser(req, res, next) {
 	}
 }
 export function isAdmin(req, res, next) {	
-	if ((req.user.rol === 'admin')) {
+	if ((req.user.rol === 'admin' ||req.user.rol === 'premium')) {
 		next();
 	} else {
 		res.redirect('/');

@@ -8,8 +8,7 @@ import { logger } from './middleware/logger.middleware.js';
 if (cluster.isPrimary) {
     logger.info(`Primary ${process.pid} is running`);
     const cpuCount = os.cpus().length;
-    // for (let i = 0; i < cpuCount; i++) {        
-    for (let i = 0; i < 1; i++) { //TODO: cambiar por CPU COUNT   
+    for (let i = 0; i < cpuCount; i++) {        
         cluster.fork();
     }
     cluster.on('exit', (worker, code, signal) => {
@@ -44,7 +43,7 @@ if (cluster.isPrimary) {
                         socket.emit('totalProducts', totalProducts);
 
                         socket.on('new-product', async (product) => {
-                            try {
+                            try {    
                                 await productsController.addProduct(product)
                                 totalProducts = await productsController.getAllProducts()
                             } catch (err) {
@@ -53,9 +52,8 @@ if (cluster.isPrimary) {
                             io.emit('totalProducts', totalProducts);
                         });
 
-                        socket.on('delete-product', async (prodId) => {
-                            try {
-                                await productsController.deleteProduct(prodId)
+                        socket.on('delete-product', async () => {
+                            try {                                                           
                                 totalProducts = await productsController.getAllProducts()
                             } catch (err) {
                                 logger.error(err)

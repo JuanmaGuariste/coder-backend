@@ -42,10 +42,9 @@ const productSchema = mongoose.Schema({
         type: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "user",
+                ref: "users",
             }
         ],
-        default: "admin",        
     }
 });
 
