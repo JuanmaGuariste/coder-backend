@@ -17,6 +17,8 @@ import { mockingProductsRouter } from './routers/mockingproducts.router.js';
 import { errorsManagerMiddleware } from './middleware/errorsManager.middleware.js';
 import { loggerMiddleware } from './middleware/logger.middleware.js';
 import { logsRouter } from './routers/logs.router.js';
+import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 
 const app = express();
 app.use(express.json());
@@ -35,6 +37,34 @@ app.use(passport.initialize());
 
 mongoose.connect(environment.MONGO_URL);
 
+const swaggerOptions = {
+	definition: {
+		openapi: '3.0.1',
+		info: {
+			title: 'Upsoon API',
+			version: '1.0.0',
+			description: 'Upsoon API Information',
+		},
+		servers: [
+			{
+				url: 'http://localhost:8080',
+			},
+			{
+				url: 'http://api-uat.upsoon.com',
+			},
+			{
+				url: 'http://api-preprod.upsoon.com',
+			},
+			{
+				url: 'http://api.upsoon.com',
+			},
+		]
+	},
+	apis: ['./src/routers/*.js'],	
+}
+
+const spects = swaggerJsDoc(swaggerOptions);
+
 app.use(
 	session({
 		store: MongoStore.create({
@@ -50,6 +80,11 @@ app.use(
 	})
 );
 
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(spects));
+app.use('/swagger.json', (req, res) => {
+	res.setHeader('Content-Type', 'application/json');
+	res.send(spects);	
+})
 app.use(loggerMiddleware);
 app.use('/', viewsRouter);
 app.use('/api/products', productsRouter);

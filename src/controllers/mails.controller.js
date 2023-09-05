@@ -15,7 +15,6 @@ const transporter = nodemailer.createTransport({
 })
 
 class MailsController {
-
     async createMail(ticketId) {
         let ticket = await ticketsController.getTicketById(ticketId);        
         const htmlContent = `
@@ -30,10 +29,6 @@ class MailsController {
             to: environment.EMAIL,
             subject: 'UpSoon - Ticket de compra',
             html: htmlContent,
-            // attachments: [{
-            //     filename: 'ticket.txt',
-            //     content: htmlContent,
-            // }],
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -64,7 +59,7 @@ class MailsController {
                             `;
             const mailOptions = {
                 from: `UpSoon Ecommerce <${environment.EMAIL}>`,
-                to: user.email, 
+                to: user.EMAIL, 
                 subject: 'UpSoon - Restauración de contraseña',
                 html: htmlContent,
             };
