@@ -4,23 +4,45 @@ import { Server } from 'socket.io';
 import productsController from './controllers/products.controller.js';
 import chatsController from './controllers/chats.controller.js';
 import { logger } from './middleware/logger.middleware.js';
+import { setupMaster, setupWorker } from '@socket.io/sticky';
+import { createAdapter, setupPrimary } from '@socket.io/cluster-adapter';
 
 if (cluster.isPrimary) {
     logger.info(`Primary ${process.pid} is running`);
-    const cpuCount = os.cpus().length;
-    for (let i = 0; i < cpuCount; i++) {        
-        cluster.fork();
-    }
-    cluster.on('exit', (worker, code, signal) => {
-        logger.error(`Worker ${worker.process.pid} died - ${signal || code}`);
-        cluster.fork();
-    })
+    import('./config/environment.js')
+        .then((module) => {
+            const environment = module.default;
+            import("./app.js")
+                .then((module) => {
+                    const app = module.default;
+                    const webServer = app.listen(3000);
+                    setupMaster(webServer, {
+                        loadBalancingMethod: "least-connection",
+                    });
+
+                    setupPrimary();
+
+                    cluster.setupPrimary({
+                        serialization: "advanced",
+                    });
+
+                    const cpuCount = os.cpus().length;
+
+                    for (let i = 0; i < cpuCount; i++) {
+                        cluster.fork();
+                    }
+
+                    cluster.on("exit", (worker) => {
+                        logger.error(`Worker ${worker.process.pid} died`);
+                        cluster.fork();
+                    });
+                })
+        });
 } else {
     logger.info(`Worker ${process.pid} started`);
     import('./config/environment.js')
         .then((module) => {
             const environment = module.default;
-
             import("./app.js")
                 .then((module) => {
                     const app = module.default;
@@ -29,9 +51,13 @@ if (cluster.isPrimary) {
                     });
 
                     const io = new Server(webServer);
+
+                    io.adapter(createAdapter());
+
+                    setupWorker(io);
                     let totalProducts = [];
                     let messages = [];
-                    io.on('connection', async (socket) => {
+                    io.on("connection", async (socket) => {
                         try {
                             totalProducts = await productsController.getAllProducts()
                             messages = await chatsController.getAllMessages()
@@ -43,7 +69,7 @@ if (cluster.isPrimary) {
                         socket.emit('totalProducts', totalProducts);
 
                         socket.on('new-product', async (product) => {
-                            try {    
+                            try {
                                 await productsController.addProduct(product)
                                 totalProducts = await productsController.getAllProducts()
                             } catch (err) {
@@ -53,7 +79,7 @@ if (cluster.isPrimary) {
                         });
 
                         socket.on('delete-product', async () => {
-                            try {                                                           
+                            try {
                                 totalProducts = await productsController.getAllProducts()
                             } catch (err) {
                                 logger.error(err)
@@ -73,6 +99,7 @@ if (cluster.isPrimary) {
                             socket.broadcast.emit('connected', data);
                         });
                     });
-                })
-        })
+
+                });
+        });
 }
