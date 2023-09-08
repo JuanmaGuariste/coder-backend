@@ -60,7 +60,7 @@ async function deleteProductFromCart(pid, cid) {
 	}
 }
 
-function sendProduct(userId) {
+async function sendProduct(userId) {
 	const product = {}
 	product.title = document.getElementById('title').value;
 	product.description = document.getElementById('description').value;
@@ -71,7 +71,13 @@ function sendProduct(userId) {
 	product.stock = document.getElementById('stock').value;
 	product.status = document.getElementById('status').value;
 	product.owner = userId;
-	socket.emit('new-product', product);
+	const response = await fetch(`http://localhost:8080/api/products`, {
+		method: 'POST',
+		body: JSON.stringify(product),
+		headers: {
+			'Content-Type': 'application/json'
+		}		
+	});
 }
 
 async function deleteProduct() {
@@ -80,12 +86,7 @@ async function deleteProduct() {
 		
 		let response = await fetch(`http://localhost:8080/api/products/${prodId}`, {
 			method: 'DELETE'
-        })		
-        if (response.ok ) {			
-			await socket.emit('delete-product');
-        } else {
-            console.log('Error al eliminar el producto:', response.statusText);
-        }
+        })		       
     } catch (error) {
         console.log('Error al enviar la solicitud de eliminación:', error);
     }
@@ -140,7 +141,7 @@ async function restorePassword() {
 }
 
 socket.on('totalProducts', (data) => {
-	const html = data.map((elem, index) => {
+	const html = JSON.parse(data).map((elem, index) => {
 		return `<div class="product-container">
 		<h2>Producto</h2>
 		<p>ID: ${elem._id}</p>

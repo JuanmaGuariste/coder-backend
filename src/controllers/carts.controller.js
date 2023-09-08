@@ -21,7 +21,6 @@ class CartsController {
 			}
 			return await this.service.addProductToCart(pid, cid);
 		} catch (err){
-			console.log("ERRROOOORRR", err)
 			req.logger.error(err)
 		}
     }

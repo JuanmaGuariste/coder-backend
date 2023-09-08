@@ -13,7 +13,7 @@ class isValidProductDTO {
     code;
     stock;
     status;
-
+    owner;
     constructor(product) {
         this.title = product.title;
         this.description = product.description;
@@ -23,8 +23,9 @@ class isValidProductDTO {
         this.code = product.code;
         this.stock = product.stock;
         this.status = product.status;
+        this.owner = product.owner;
 
-        if (!this.title || !this.description || !this.category || !this.price || !this.thumbnail || !this.code || !this.stock || !this.status) {
+        if (!this.title || !this.description || !this.category || !this.price || !this.thumbnail || !this.code || !this.stock || !this.status || !this.owner) {
             throw CustomErrors.createError({
                 name: "Product Creation Error",
                 cause: generateProductErrorInfo(product),

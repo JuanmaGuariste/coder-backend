@@ -24,7 +24,7 @@ class ProductsController {
 		let prod = await this.service.getProductById(id);	
 		if (user.rol == "admin" ){
 			return await this.service.deleteProduct(id);
-		} else if ((user.rol == "premium") && (prod.owner == user._id)) {
+		} else if ((user.rol == "premium") && (`${prod.owner}` === user._id)) {
 			return await this.service.deleteProduct(id);
 		} else {
 			return false

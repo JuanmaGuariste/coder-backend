@@ -144,7 +144,6 @@ cartsRouter.post("/:cid/product/:pid", middlewarePassportJWT, async (req, res) =
         res.status(201).send({ status: "success", payload: cart });
     }
     catch (err) {
-        console.log("ERRORE", err)
         res.status(500).send({ status: "error", error: err })
     }
 });

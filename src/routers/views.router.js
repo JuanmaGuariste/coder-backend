@@ -48,7 +48,7 @@ viewsRouter.get('/realtimeproducts', middlewarePassportJWT, isAdmin, (req, res) 
     });
 });
 
-viewsRouter.get('/chat', middlewarePassportJWT, isUser, async (req, res) => {
+viewsRouter.get('/chat', middlewarePassportJWT, async (req, res) => {
     const user = req.user;
     res.render('chat', {
         user,
