@@ -69,8 +69,7 @@ async function sendProduct(userId) {
 	product.thumbnail = document.getElementById('thumbnail').value;
 	product.code = document.getElementById('code').value;
 	product.stock = document.getElementById('stock').value;
-	product.status = document.getElementById('status').value;
-	product.owner = userId;
+	product.status = document.getElementById('status').value;	
 	const response = await fetch(`http://localhost:8080/api/products`, {
 		method: 'POST',
 		body: JSON.stringify(product),
