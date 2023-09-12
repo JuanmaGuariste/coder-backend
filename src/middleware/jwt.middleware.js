@@ -33,14 +33,4 @@ const middlewarePassportJWT = async (req, res, next) => {
 	})(req, res, next);
 };
 
-
-
-// const generateJWTTsoken = async (payload) => {
-//     const secretKey = 'adkkkkasdasdasdapsdoiak##sdasdasd%';
-//     const expiresIn = '10m';
-//     const jwt = await import('jsonwebtoken')
-//     const token = jwt.default.sign(payload, secretKey, { expiresIn });
-//     return token;
-// }
-
 export {middlewarePassportJWT, authToken};
