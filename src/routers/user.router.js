@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import bcrypt from "bcrypt";
 import usersController from "../controllers/users.controller.js";
 import environment from "../config/environment.js";
+import { uploadFile } from "../middleware/upload.middleware.js";
+import { middlewarePassportJWT } from '../middleware/jwt.middleware.js';
 
 const userRouter = Router();
 
@@ -78,17 +80,32 @@ userRouter.post('/login', async (req, res) => {
 userRouter.post('/premium/:uid', async (req, res) => {
 	let uid = req.params.uid;
 	let userRol = req.body
-    try {
-        let user = await usersController.getUserById(uid);
+	try {
+		let user = await usersController.getUserById(uid);
 		user.rol = `${userRol.rol}`;
 		user = await usersController.updateUser(uid, user);
-        res.status(201).send({ status: "success", payload: user })
-    }
-    catch (err) {
+		res.status(201).send({ status: "success", payload: user })
+	}
+	catch (err) {
 		req.logger.error(err)
-        res.status(500).send({ status: "error", error: err })
-    }
+		res.status(500).send({ status: "error", error: err })
+	}
+});
 
+userRouter.post('/:uid/documents', middlewarePassportJWT, uploadFile("public/documents", ".jpg").array("documents", 2), async (req, res) => {
+	let uid = req.params.uid;
+	try {
+		let user = await usersController.getUserById(uid);
+		user.img = `./public/documents/documents-65021de3789c2a1ef39d30a7.jpg`;
+		user = await usersController.updateUser(uid, user);	
+		res.send("Files uploaded successfully");
+	}
+	catch (err) {
+		console.log("Estoy en error")
+		console.log(err)
+		req.logger.error(err)
+		res.status(500).send({ status: "error", error: err })
+	}
 });
 
 export default userRouter;

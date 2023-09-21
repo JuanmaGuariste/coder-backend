@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: true,
         required: true,
-        index: true,        
+        index: true,
     },
     age: Number,
     password: String,
@@ -24,7 +24,20 @@ const userSchema = new mongoose.Schema({
                 ref: "carts",
             }
         ],
-        default: "",        
+        default: "",
+    },
+    documents: {
+        type: [
+            {
+                name: String,
+                reference: String
+            }
+        ],
+        default: [],
+    },
+    last_connection: {
+        type: Date,
+        default: new Date(),
     }
 });
 
