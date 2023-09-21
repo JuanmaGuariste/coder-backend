@@ -96,7 +96,7 @@ userRouter.post('/:uid/documents', middlewarePassportJWT, uploadFile("public/doc
 	let uid = req.params.uid;
 	try {
 		let user = await usersController.getUserById(uid);
-		user.img = `./public/documents/documents-65021de3789c2a1ef39d30a7.jpg`;
+		user.img = `/documents/${req.files[0].filename}`;
 		user = await usersController.updateUser(uid, user);	
 		res.send("Files uploaded successfully");
 	}
