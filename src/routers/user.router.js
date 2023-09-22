@@ -37,7 +37,11 @@ userRouter.get(
 	}
 );
 
-userRouter.post('/logout', (req, res) => {
+userRouter.post('/logout', middlewarePassportJWT, async (req, res) => {
+	let user = req.user
+	user = await usersController.getUserByEmail(user.email);	
+	user.last_connection = new Date();
+	await usersController.updateUser(user._id, user);
 	res.clearCookie('token');
 	res.redirect('/login');
 });
@@ -55,10 +59,16 @@ userRouter.post('/login', async (req, res) => {
 				password: password,
 				img: "https://pbs.twimg.com/profile_images/1465705281279590405/1yiTdkKj_400x400.png",
 				rol: "admin",
+				cart: "",
+				documents: [],
+				last_connection: new Date(),
 				_id: "coder",
+
 			};
 		} else {
 			user = await usersController.getUserByEmail(email);
+			user.last_connection = new Date();
+			await usersController.updateUser(user._id, user);
 			if (!user) {
 				return res.redirect('/loginError');
 			}
@@ -97,7 +107,7 @@ userRouter.post('/:uid/documents', middlewarePassportJWT, uploadFile("public/doc
 	try {
 		let user = await usersController.getUserById(uid);
 		user.img = `/documents/${req.files[0].filename}`;
-		user = await usersController.updateUser(uid, user);	
+		user = await usersController.updateUser(uid, user);
 		res.send("Files uploaded successfully");
 	}
 	catch (err) {
