@@ -102,7 +102,7 @@ userRouter.post('/premium/:uid', async (req, res) => {
 	}
 });
 
-userRouter.post('/:uid/documents', middlewarePassportJWT, uploadFile("public/profiles", ".jpg").array("documents", 2), async (req, res) => {
+userRouter.post('/:uid/documents', middlewarePassportJWT, uploadFile("public/profiles", ".jpg").array("profile", 2), async (req, res) => {
 	let uid = req.params.uid;
 	try {
 		let user = await usersController.getUserById(uid);

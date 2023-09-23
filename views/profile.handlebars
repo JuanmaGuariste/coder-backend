@@ -18,7 +18,7 @@
 				{{#if user.rol}}<li><b>Rol: </b>{{user.rol}}</li>{{/if}}
 			</ul>
 			<form action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data">
-				<input type="file" class="form-control" name="documents" id="documents" multiple="multiple">
+				<input type="file" class="form-control" name="profile" id="profile" multiple="multiple">
 				<button type="submit">Subir imagen de perfil</button>
 			</form>
 		</div>
