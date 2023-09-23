@@ -102,17 +102,15 @@ userRouter.post('/premium/:uid', async (req, res) => {
 	}
 });
 
-userRouter.post('/:uid/documents', middlewarePassportJWT, uploadFile("public/documents", ".jpg").array("documents", 2), async (req, res) => {
+userRouter.post('/:uid/documents', middlewarePassportJWT, uploadFile("public/profiles", ".jpg").array("documents", 2), async (req, res) => {
 	let uid = req.params.uid;
 	try {
 		let user = await usersController.getUserById(uid);
-		user.img = `/documents/${req.files[0].filename}`;
+		user.img = `/profiles/${req.files[0].filename}`;
 		user = await usersController.updateUser(uid, user);
 		res.send("Files uploaded successfully");
 	}
 	catch (err) {
-		console.log("Estoy en error")
-		console.log(err)
 		req.logger.error(err)
 		res.status(500).send({ status: "error", error: err })
 	}
