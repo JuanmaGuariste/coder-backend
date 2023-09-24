@@ -134,4 +134,20 @@ viewsRouter.get("/restore-password/uid/:uid/token/:token", async (req, res) => {
     }
 })
 
+viewsRouter.get('/premium', middlewarePassportJWT, async (req, res) => {
+    let user = await usersController.getUserById(req.user._id);
+    if (!user) {
+        user = req.user;
+        res.render('premium', {
+            title: 'Usuario premium',
+            user,
+        });
+    } else {
+        res.render('premium', {
+            title: 'Usuario premium',
+            user,
+        });
+    }
+});
+
 export default viewsRouter;

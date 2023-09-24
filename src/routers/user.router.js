@@ -39,7 +39,7 @@ userRouter.get(
 
 userRouter.post('/logout', middlewarePassportJWT, async (req, res) => {
 	let user = req.user
-	user = await usersController.getUserByEmail(user.email);	
+	user = await usersController.getUserByEmail(user.email);
 	user.last_connection = new Date();
 	await usersController.updateUser(user._id, user);
 	res.clearCookie('token');
@@ -102,18 +102,36 @@ userRouter.post('/premium/:uid', async (req, res) => {
 	}
 });
 
-userRouter.post('/:uid/documents', middlewarePassportJWT, uploadFile("public/profiles", ".jpg").array("profile", 2), async (req, res) => {
-	let uid = req.params.uid;
-	try {
-		let user = await usersController.getUserById(uid);
-		user.img = `/profiles/${req.files[0].filename}`;
-		user = await usersController.updateUser(uid, user);
-		res.send("Files uploaded successfully");
-	}
-	catch (err) {
-		req.logger.error(err)
-		res.status(500).send({ status: "error", error: err })
-	}
-});
+userRouter.post('/:uid/documents',
+	middlewarePassportJWT,
+	uploadFile().fields([
+		{ name: "identification", maxCount: 1 },
+		{ name: "address", maxCount: 1 },
+		{ name: "account", maxCount: 1 },
+		{ name: "profile", maxCount: 1 },
+	]),
+	async (req, res) => {
+		let uid = req.params.uid;
+		try {
+			let user = await usersController.getUserById(uid);
+			if (req.files["profile"]) {
+				user.img = `/profiles/${req.files.profile[0].filename}`;
+			} else {
+				const identificationFile = req.files["identification"];
+				const addressFile = req.files["address"];
+				const accountFile = req.files["account"];
+				if (!identificationFile || !addressFile || !accountFile) {
+					return res.status(400).send({ status: "error", error: "Falta algún archivo" });
+				}
+				user.rol = "premium"
+			}
+			user = await usersController.updateUser(uid, user);
+			res.send("Files uploaded successfully");
+		}
+		catch (err) {
+			console.log(err)
+			res.status(500).send({ status: "error", error: err })
+		}
+	});
 
 export default userRouter;
