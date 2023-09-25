@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema({
     last_connection: {
         type: Date,
         default: new Date(),
+    },
+    status: {
+        type: Boolean,
+        default: false
     }
 });
 

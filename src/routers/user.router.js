@@ -92,9 +92,16 @@ userRouter.post('/premium/:uid', async (req, res) => {
 	let userRol = req.body
 	try {
 		let user = await usersController.getUserById(uid);
-		user.rol = `${userRol.rol}`;
+		if ((`${userRol.rol}` === "user")) {
+			user.status = false
+			user.rol = `${userRol.rol}`;
+		} else if (user.status && (`${userRol.rol}` === "premium")) {
+			user.rol = `${userRol.rol}`;
+		} else if ((!user.status) && (`${userRol.rol}` === "premium")) {
+			res.status(401).send({ status: "error", error: "Primero debe subir los archivos"})
+		}
 		user = await usersController.updateUser(uid, user);
-		res.status(201).send({ status: "success", payload: user })
+		res.status(201).send({ status: "success", payload: user.first_name })
 	}
 	catch (err) {
 		req.logger.error(err)
@@ -114,6 +121,9 @@ userRouter.post('/:uid/documents',
 		let uid = req.params.uid;
 		try {
 			let user = await usersController.getUserById(uid);
+			if (!user.documents) {
+				user.documents = [];
+			}
 			if (req.files["profile"]) {
 				user.img = `/profiles/${req.files.profile[0].filename}`;
 			} else {
@@ -123,7 +133,22 @@ userRouter.post('/:uid/documents',
 				if (!identificationFile || !addressFile || !accountFile) {
 					return res.status(400).send({ status: "error", error: "Falta algún archivo" });
 				}
-				user.rol = "premium"
+				const documentsToAdd = [
+					{
+						name: identificationFile[0].filename,
+						reference: identificationFile[0].path,
+					},
+					{
+						name: addressFile[0].filename,
+						reference: addressFile[0].path,
+					},
+					{
+						name: accountFile[0].filename,
+						reference: accountFile[0].path,
+					},
+				];
+				user.documents.push(...documentsToAdd);
+				user.status = true
 			}
 			user = await usersController.updateUser(uid, user);
 			res.send("Files uploaded successfully");

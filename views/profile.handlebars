@@ -21,7 +21,11 @@
 				<input type="file" class="form-control" name="profile" id="profile">
 				<button type="submit">Subir imagen de perfil</button>
 			</form>
-			 <a class="btn btn-warning" href="./premium">Quiero ser usuario premium</a>
+			<a class="btn btn-warning my-2" href="./premium">Quiero ser usuario premium</a>
+			<form action="/api/users/premium/{{user._id}}" method="post">
+				<input type="hidden" id="rolInput" name="rol" value="user">
+				<button class="btn btn-danger my-2" type="submit">Quiero dejar de ser premium</button>
+			</form>
 		</div>
 	</div>
 </section>

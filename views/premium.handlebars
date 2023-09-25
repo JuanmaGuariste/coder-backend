@@ -10,15 +10,24 @@
 		</div>
 		<div class='col-8' style='padding: 50px 20px;'>
 			<h1>Hola, {{user.first_name}} {{user.last_name}}</h1>
-			<p>Carga los siguientes datos para poder ser un usuario premium:</p>			
+			<p>Carga los siguientes datos para poder ser un usuario premium:</p>
 			<form action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data">
-                <h4>Identificación</h4>
-				<input type="file" class="form-control" name="identification" id="identification" >
-                <h4>Comprobante de domicilio</h4>
-				<input type="file" class="form-control" name="address" id="address" >
-                <h4>Comprobante de estado de cuenta</h4>
-				<input type="file" class="form-control" name="account" id="account" >
+				<h4>Identificación</h4>
+				<input type="file" class="form-control" name="identification" id="identification">
+				<h4>Comprobante de domicilio</h4>
+				<input type="file" class="form-control" name="address" id="address">
+				<h4>Comprobante de estado de cuenta</h4>
+				<input type="file" class="form-control" name="account" id="account">
 				<button class="btn btn-success" type="submit">Subir archivos</button>
+			</form>
+			{{#if user.status}}
+			<h4 class="text-success my-4">Los archivos se subieron correctamente.</h4>
+			{{else}}
+			<h4 class="text-danger my-4">Por favor, ingrese todos los archivos antes de enviar la solicitud.</h4>
+			{{/if}}
+			<form action="/api/users/premium/{{user._id}}" method="post">
+				<input type="hidden" id="rolInput" name="rol" value="premium">
+				<button class="btn btn-warning" type="submit">Enviar solicitud</button>
 			</form>
 		</div>
 	</div>
