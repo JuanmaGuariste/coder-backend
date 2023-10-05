@@ -1,32 +1,166 @@
-import UsersService from '../services/users.service.js';
-import userDAO from '../dao/mongo/UserDAO.js';
+import jwt from 'jsonwebtoken';
+import bcrypt from "bcrypt";
+import environment from "../config/environment.js";
 
-class UsersController {
-	constructor() {
-		this.service = new UsersService(userDAO);
-	}
-    
-    async getAllUsers() {
-		return await this.service.getAllUsers();
+import usersService from '../services/users.service.js';
+
+export default class UsersController {
+	async home(req, res) {
+		res.redirect('/products');
 	}
 
-	async createUser(user) {
-		return await this.service.createUser(user);
+	async github(req, res) { }
+
+	githubCallback(req, res) {
+		req.session.user = req.user;
+		let user = req.session.user
+		const token = jwt.sign({ user }, 'privateKey', { expiresIn: '1h' });
+		res.cookie('token', token, {
+			httpOnly: true,
+			maxAge: 6000000,
+		}).redirect('/products');
 	}
+	async logout(req, res) {
+		let user = req.user
+		user = await usersService.getUserByEmail(user.email);
+		user.last_connection = new Date();
+		await usersService.updateUser(user._id, user);
+		res.clearCookie('token');
+		res.redirect('/login');
+	}
+
+	async login(req, res) {
+		const { email, password } = req.body;
+		let user = {};
+		try {
+			if (email === environment.ADMIN_NAME && password === environment.ADMIN_PASSWORD) {
+				user = {
+					first_name: "Coder",
+					last_name: "House",
+					email: email,
+					age: 26,
+					password: password,
+					img: "https://pbs.twimg.com/profile_images/1465705281279590405/1yiTdkKj_400x400.png",
+					rol: "admin",
+					cart: "",
+					documents: [],
+					last_connection: new Date(),
+					_id: "coder",
 	
-    async getUserById(id) {
-		return await this.service.getUserById(id);
+				};
+			} else {
+				user = await usersService.getUserByEmail(email);
+				user.last_connection = new Date();
+				await usersService.updateUser(user._id, user);
+				if (!user) {
+					return res.redirect('/loginError');
+				}
+				if (!bcrypt.compareSync(password, user.password)) {
+					return res.redirect('/loginError');
+				}
+			}
+			const token = jwt.sign({ user }, 'privateKey', { expiresIn: '1h' });
+			res.cookie('token', token, {
+				httpOnly: true,
+				maxAge: 6000000,
+			}).redirect('/products');
+		} catch (err) {
+			res.redirect('/loginError');
+		}
 	}
 
-	async getUserByEmail(email) {		
-		return await this.service.getUserByEmail(email);
+	async premium(req, res) {
+		let uid = req.params.uid;
+		let userRol = req.body
+		try {
+			let user = await usersService.getUserById(uid);
+			if ((`${userRol.rol}` === "user")) {
+				user.status = false
+				user.rol = `${userRol.rol}`;
+			} else if (user.status && (`${userRol.rol}` === "premium")) {
+				user.rol = `${userRol.rol}`;
+			} else if ((!user.status) && (`${userRol.rol}` === "premium")) {
+				res.status(401).send({ status: "error", error: "Primero debe subir los archivos"})
+			}
+			user = await usersService.updateUser(uid, user);
+			res.status(201).send({ status: "success", payload: user.first_name })
+		}
+		catch (err) {
+			req.logger.error(err)
+			res.status(500).send({ status: "error", error: err })
+		}
 	}
 
-	async updateUser(id, user) {
-		return await this.service.updateUser(id, user);
+	async uploadDocuments(req, res) {
+		let uid = req.params.uid;
+		try {
+			let user = await usersService.getUserById(uid);
+			if (!user.documents) {
+				user.documents = [];
+			}
+			if (req.files["profile"]) {
+				user.img = `/profiles/${req.files.profile[0].filename}`;
+			} else {
+				const identificationFile = req.files["identification"];
+				const addressFile = req.files["address"];
+				const accountFile = req.files["account"];
+				if (!identificationFile || !addressFile || !accountFile) {
+					return res.status(400).send({ status: "error", error: "Falta algún archivo" });
+				}
+				const documentsToAdd = [
+					{
+						name: identificationFile[0].filename,
+						reference: identificationFile[0].path,
+					},
+					{
+						name: addressFile[0].filename,
+						reference: addressFile[0].path,
+					},
+					{
+						name: accountFile[0].filename,
+						reference: accountFile[0].path,
+					},
+				];
+				user.documents.push(...documentsToAdd);
+				user.status = true
+			}
+			user = await usersService.updateUser(uid, user);
+			res.send("Files uploaded successfully");
+		}
+		catch (err) {
+			console.log(err)
+			res.status(500).send({ status: "error", error: err })
+		}
 	}
 }
 
-const usersController = new UsersController();
 
-export default usersController;
+// class UsersController {
+// 	constructor() {
+// 		this.service = new UsersService(userDAO);
+// 	}
+    
+//     async getAllUsers() {
+// 		return await this.service.getAllUsers();
+// 	}
+
+// 	async createUser(user) {
+// 		return await this.service.createUser(user);
+// 	}
+	
+//     async getUserById(id) {
+// 		return await this.service.getUserById(id);
+// 	}
+
+// 	async getUserByEmail(email) {		
+// 		return await this.service.getUserByEmail(email);
+// 	}
+
+// 	async updateUser(id, user) {
+// 		return await this.service.updateUser(id, user);
+// 	}
+// }
+
+// const usersController = new UsersController();
+
+// export default usersController;

@@ -1,113 +1,36 @@
 import { Router } from "express";
 import passport from "passport";
-import jwt from 'jsonwebtoken';
-import bcrypt from "bcrypt";
-import usersController from "../controllers/users.controller.js";
-import environment from "../config/environment.js";
 import { uploadFile } from "../middleware/upload.middleware.js";
 import { middlewarePassportJWT } from '../middleware/jwt.middleware.js';
+import UsersController from "../controllers/users.controller.js";
+
+const userController = new UsersController();
 
 const userRouter = Router();
 
 userRouter.post(
 	'/',
 	passport.authenticate('register', { failureRedirect: '/registerError' }),
-	async (req, res) => {
-		res.redirect('/products');
-	}
-);
+	userController.home
+	);
 
 userRouter.get(
 	'/github',
 	passport.authenticate('github', { scope: ['user:email'] }),
-	async (req, res) => { }
+	userController.github
 );
 
 userRouter.get(
 	'/githubcallback',
 	passport.authenticate('github', { failureRedirect: '/login' }),
-	(req, res) => {
-		req.session.user = req.user;
-		let user = req.session.user
-		const token = jwt.sign({ user }, 'privateKey', { expiresIn: '1h' });
-		res.cookie('token', token, {
-			httpOnly: true,
-			maxAge: 6000000,
-		}).redirect('/products');
-	}
+	userController.githubCallback
 );
 
-userRouter.post('/logout', middlewarePassportJWT, async (req, res) => {
-	let user = req.user
-	user = await usersController.getUserByEmail(user.email);
-	user.last_connection = new Date();
-	await usersController.updateUser(user._id, user);
-	res.clearCookie('token');
-	res.redirect('/login');
-});
+userRouter.post('/logout', middlewarePassportJWT, userController.logout);
 
-userRouter.post('/login', async (req, res) => {
-	const { email, password } = req.body;
-	let user = {};
-	try {
-		if (email === environment.ADMIN_NAME && password === environment.ADMIN_PASSWORD) {
-			user = {
-				first_name: "Coder",
-				last_name: "House",
-				email: email,
-				age: 26,
-				password: password,
-				img: "https://pbs.twimg.com/profile_images/1465705281279590405/1yiTdkKj_400x400.png",
-				rol: "admin",
-				cart: "",
-				documents: [],
-				last_connection: new Date(),
-				_id: "coder",
+userRouter.post('/login', userController.login);
 
-			};
-		} else {
-			user = await usersController.getUserByEmail(email);
-			user.last_connection = new Date();
-			await usersController.updateUser(user._id, user);
-			if (!user) {
-				return res.redirect('/loginError');
-			}
-			if (!bcrypt.compareSync(password, user.password)) {
-				return res.redirect('/loginError');
-			}
-		}
-		const token = jwt.sign({ user }, 'privateKey', { expiresIn: '1h' });
-		res.cookie('token', token, {
-			httpOnly: true,
-			maxAge: 6000000,
-		}).redirect('/products');
-	} catch (err) {
-		res.redirect('/loginError');
-	}
-}
-);
-
-userRouter.post('/premium/:uid', async (req, res) => {
-	let uid = req.params.uid;
-	let userRol = req.body
-	try {
-		let user = await usersController.getUserById(uid);
-		if ((`${userRol.rol}` === "user")) {
-			user.status = false
-			user.rol = `${userRol.rol}`;
-		} else if (user.status && (`${userRol.rol}` === "premium")) {
-			user.rol = `${userRol.rol}`;
-		} else if ((!user.status) && (`${userRol.rol}` === "premium")) {
-			res.status(401).send({ status: "error", error: "Primero debe subir los archivos"})
-		}
-		user = await usersController.updateUser(uid, user);
-		res.status(201).send({ status: "success", payload: user.first_name })
-	}
-	catch (err) {
-		req.logger.error(err)
-		res.status(500).send({ status: "error", error: err })
-	}
-});
+userRouter.post('/premium/:uid', userController.premium);
 
 userRouter.post('/:uid/documents',
 	middlewarePassportJWT,
@@ -117,46 +40,7 @@ userRouter.post('/:uid/documents',
 		{ name: "account", maxCount: 1 },
 		{ name: "profile", maxCount: 1 },
 	]),
-	async (req, res) => {
-		let uid = req.params.uid;
-		try {
-			let user = await usersController.getUserById(uid);
-			if (!user.documents) {
-				user.documents = [];
-			}
-			if (req.files["profile"]) {
-				user.img = `/profiles/${req.files.profile[0].filename}`;
-			} else {
-				const identificationFile = req.files["identification"];
-				const addressFile = req.files["address"];
-				const accountFile = req.files["account"];
-				if (!identificationFile || !addressFile || !accountFile) {
-					return res.status(400).send({ status: "error", error: "Falta algún archivo" });
-				}
-				const documentsToAdd = [
-					{
-						name: identificationFile[0].filename,
-						reference: identificationFile[0].path,
-					},
-					{
-						name: addressFile[0].filename,
-						reference: addressFile[0].path,
-					},
-					{
-						name: accountFile[0].filename,
-						reference: accountFile[0].path,
-					},
-				];
-				user.documents.push(...documentsToAdd);
-				user.status = true
-			}
-			user = await usersController.updateUser(uid, user);
-			res.send("Files uploaded successfully");
-		}
-		catch (err) {
-			console.log(err)
-			res.status(500).send({ status: "error", error: err })
-		}
-	});
+	userController.uploadDocuments
+	);
 
 export default userRouter;

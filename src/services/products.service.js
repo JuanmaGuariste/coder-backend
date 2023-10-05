@@ -1,6 +1,6 @@
 import ProductRepository from "../repositories/products.repository.js";
-import userDAO from "../dao/mongo/UserDAO.js";
+import productDAO from "../dao/mongo/ProductDAO.js";
 
-const productsService = new ProductRepository(userDAO);
+const productsService = new ProductRepository(productDAO);
 
-export default productsService
+export default productsService;
