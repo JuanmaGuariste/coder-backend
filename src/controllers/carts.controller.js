@@ -1,54 +1,96 @@
-import CartsService from '../services/carts.service.js';
-import cartDAO from '../dao/mongo/CartDAO.js';
-import productsController from './products.controller.js';
-class CartsController {
-	constructor() {
-		this.service = new CartsService(cartDAO);
-	}
+import cartsService from '../services/carts.service.js';
 
+export default class CartsController {
+	constructor() {
+		this.service = cartsService;
+	}
+	
 	async getCarts() {
 		return await this.service.getCarts();
 	}
-
-	async addCart() {
-		return await this.service.addCart();
+	async addCart(req, res) {
+		try {
+			let newCart = await this.service.addCart();
+			res.status(201).send({ status: "success", payload: newCart });
+		} catch (err) {
+			res.status(500).send({ status: "error", error: err })
+		}
 	}
-    async addProductToCart(pid, cid, user) {
-		try{
-			let product = await productsController.getProductById(pid);
+
+	async addProductToCart (req, res) {
+		let cid = req.params.cid;
+		let pid = req.params.pid;
+		let user = req.user;
+		try {
+			let product = await this.service.getProductById(pid);
 			if(`${user._id}` === `${product.owner}`){
 				return 0
 			}
-			return await this.service.addProductToCart(pid, cid);
-		} catch (err){
-			req.logger.error(err)
+			let cart = await this.service.addProductToCart(pid, cid);
+			if (!cart) {
+				res.status(403).send({ status: "success", error: "Product owner" })
+				return 0
+			}
+			res.status(201).send({ status: "success", payload: cart });
 		}
-    }
-
-    async deleteProductFromCart(pid, cid) {
-        return await this.service.deleteProductFromCart(pid, cid);
-    }
-
-    async deleteCartContent(cid) {
-        return await this.service.deleteCartContent(cid);
-    }
-
-    async updateProductInCart(pid, cid, newCant ) {
-        return await this.service.updateProductInCart(pid, cid, newCant);
-    }
-
-	async getCartById(id) {
-		return await this.service.getCartById(id);
+		catch (err) {
+			res.status(500).send({ status: "error", error: err })
+		}
 	}
+    
+	async deleteProductFromCart(req, res) {
+		let cid = req.params.cid;
+		let pid = req.params.pid;
+		try {
+			await this.service.deleteProductFromCart(pid, cid);
+			res.status(201).send({ status: "success", payload: {"ProdID": pid} });
+		} catch (err) {
+			res.status(500).send({ status: "error", error: err })
+		}
+	}    
+	async deleteCartContent(req, res) {
+		let cid = req.params.cid;
+		try {
+			await this.service.deleteCartContent(cid);         
+			res.status(201).send({ status: "success", payload: {"CartId": cid} });
+		} catch (err) {
+			res.status(500).send({ status: "error", error: err })
+		}
+	}
+    
+	async updateProductInCart(req, res) {
+		let pid = req.params.pid;
+		let cid = req.params.cid;
+		let newCant = parseInt(req.body.cant)
+		try {
+			await this.service.updateProductInCart(pid, cid, newCant);
+			res.status(201).send({ status: "success", payload: {"CartId": cid} });
+		} catch (err) {
+			res.status(500).send({ status: "error", error: err })
+		}
+	}   
+	async getCartById(req, res) {
+		let id = req.params.cid
+		try {
+			let cart = await this.service.getCartById(id);
+			res.status(201).send({ status: "success", payload: cart });
+		} catch (err) {
+			res.status(500).send({ status: "error", error: err })
+		}
+	}
+
 	async deleteCart(id) {
 		return await this.service.deleteCart(id);
 	}
 
-	async updateCart(id, cart) {
-		return await this.service.updateCart(id, cart);
+	async updateCart(req, res) {
+		let cid = req.params.cid;
+		try {
+			await this.service.updateCart(cid, req.body.products);
+			res.status(201).send({ status: "success", payload: {"CartId": cid} });
+		} catch (err) {
+			res.status(500).send({ status: "error", error: err })
+		}
 	}
+
 }
-
-const cartsController = new CartsController();
-
-export default cartsController;

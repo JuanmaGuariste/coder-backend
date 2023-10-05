@@ -26,14 +26,7 @@ class CartDAO {
 
     async addCart() {        
         return await this.model.create({});
-    }
-
-    async updateCart(cid, cart) {
-        if (!cid) {
-            throw new Error('Missing required fields');
-        }
-        return await this.model.updateOne({ _id: cid }, cart);
-    }
+    } 
 
     async deleteCart(cid) {
         if (!cid) {
@@ -59,6 +52,9 @@ class CartDAO {
     }
     
     async updateCart(cid, prod) {
+        if (!cid) {
+            throw new Error('Missing required fields');
+        }
         let cart = await this.model.findOne({ _id: cid });
         cart.products = [];
         for (let i = 0; i < prod.length; i++){

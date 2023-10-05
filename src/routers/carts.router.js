@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import cartsController from '../controllers/carts.controller.js';
-import ticketsController from '../controllers/tickets.controller.js';
+import TicketsController from '../controllers/tickets.controller.js';
 import { middlewarePassportJWT } from '../middleware/jwt.middleware.js';
+import CartsController from '../controllers/carts.controller.js';
 
+const cartsController = new CartsController();
+const ticketsController = new TicketsController();
 const cartsRouter = Router();
 
 /**
@@ -148,15 +150,7 @@ const cartsRouter = Router();
  *         500:
  *           description: Some server error
  */
-cartsRouter.get("/:cid", async (req, res) => {
-    let id = req.params.cid
-    try {
-        let cart = await cartsController.getCartById(id);
-        res.status(201).send({ status: "success", payload: cart });
-    } catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-});
+cartsRouter.get("/:cid", cartsController.getCartById);
 
 /** 
  * @swagger
@@ -184,14 +178,7 @@ cartsRouter.get("/:cid", async (req, res) => {
  *       500:
  *         description: Some server error *  
  */
-cartsRouter.post("/", async (req, res) => {
-    try {
-        let newCart = await cartsController.addCart();
-        res.status(201).send({ status: "success", payload: newCart });
-    } catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-})
+cartsRouter.post("/", cartsController.addCart)
 
 /**
  * @swagger
@@ -233,22 +220,7 @@ cartsRouter.post("/", async (req, res) => {
  *         500:
  *           description: Some server error
  */
-cartsRouter.post("/:cid/product/:pid", middlewarePassportJWT, async (req, res) => {
-    let cid = req.params.cid;
-    let pid = req.params.pid;
-    let user = req.user;
-    try {
-        let cart = await cartsController.addProductToCart(pid, cid, user);
-        if (!cart) {
-            res.status(403).send({ status: "success", error: "Product owner" })
-            return
-        }
-        res.status(201).send({ status: "success", payload: cart });
-    }
-    catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-});
+cartsRouter.post("/:cid/product/:pid", middlewarePassportJWT, cartsController.addProductToCart);
 
 /**
  * @swagger
@@ -286,16 +258,7 @@ cartsRouter.post("/:cid/product/:pid", middlewarePassportJWT, async (req, res) =
  *         500:
  *           description: Some server error
  */
-cartsRouter.delete("/:cid/product/:pid", async (req, res) => {
-    let cid = req.params.cid;
-    let pid = req.params.pid;
-    try {
-        await cartsController.deleteProductFromCart(pid, cid);
-        res.status(201).send({ status: "success", payload: {"ProdID": pid} });
-    } catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-});
+cartsRouter.delete("/:cid/product/:pid", cartsController.deleteProductFromCart);
 
 /** 
  * @swagger
@@ -328,16 +291,7 @@ cartsRouter.delete("/:cid/product/:pid", async (req, res) => {
  *         500:
  *           description: Some server error
  */
-cartsRouter.delete("/:cid", async (req, res) => {
-    let cid = req.params.cid;
-    try {
-        await cartsController.deleteCartContent(cid);         
-        res.status(201).send({ status: "success", payload: {"CartId": cid} });
-    } catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-});
-
+cartsRouter.delete("/:cid", cartsController.deleteCartContent);
 
 /** 
  * @swagger
@@ -376,15 +330,7 @@ cartsRouter.delete("/:cid", async (req, res) => {
  *         500:
  *           description: Some server error
  */
-cartsRouter.put("/:cid", async (req, res) => {
-    let cid = req.params.cid;
-    try {
-        await cartsController.updateCart(cid, req.body.products);
-        res.status(201).send({ status: "success", payload: {"CartId": cid} });
-    } catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-});
+cartsRouter.put("/:cid", cartsController.updateCart);
 
 /**
  * @swagger
@@ -428,17 +374,7 @@ cartsRouter.put("/:cid", async (req, res) => {
  *         500:
  *           description: Some server error
  */
-cartsRouter.put("/:cid/product/:pid", async (req, res) => {
-    let pid = req.params.pid;
-    let cid = req.params.cid;
-    let newCant = parseInt(req.body.cant)
-    try {
-        await cartsController.updateProductInCart(pid, cid, newCant);
-        res.status(201).send({ status: "success", payload: {"CartId": cid} });
-    } catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-});
+cartsRouter.put("/:cid/product/:pid", cartsController.updateProductInCart);
 
 /**
  * @swagger
@@ -496,17 +432,7 @@ cartsRouter.put("/:cid/product/:pid", async (req, res) => {
  *         500:
  *           description: Some server error
  */
-cartsRouter.post("/:cid/purchase", middlewarePassportJWT,  async (req, res) => {
-    let cid = req.params.cid;
-    const user = req.user   
-    try {        
-        let ticket = await ticketsController.addTicket(cid, user);
-        res.status(201).send({ status: "success", payload: {"ticket": ticket} });
-    }
-    catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-});
+cartsRouter.post("/:cid/purchase", middlewarePassportJWT,  ticketsController.addTicket);
 
 export { cartsRouter };
 

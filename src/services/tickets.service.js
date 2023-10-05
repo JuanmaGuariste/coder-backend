@@ -1,17 +1,6 @@
-export default class TicketsService {
-	constructor(dao) {
-		this.dao = dao;
-	}
+import TicketsRepository from "../repositories/products.repository.js";
+import ticketDAO from "../dao/mongo/TicketDAO.js";
 
-	async getTickets() {
-		return await this.dao.getTickets();
-	}
+const ticketsRepository = new TicketsRepository(ticketDAO);
 
-	async addTicket(ticket) {
-		return await this.dao.addTicket(ticket);
-	}
-
-	async getTicketById(tid) {
-		return await this.dao.getTicketById(tid);
-	}
-}
+export default ticketsRepository

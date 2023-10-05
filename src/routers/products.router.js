@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import productsController from '../controllers/products.controller.js';
-import { isValidProductDTO, isValidProductIdDTO } from '../dto/products.dto.js';
+import ProductsController from '../controllers/products.controller.js';
 import { middlewarePassportJWT } from '../middleware/jwt.middleware.js';
-import { emitter } from '../emiter.js';
 
+const productsController = new ProductsController();
 const productsRouter = Router();
 
 /**
@@ -297,16 +296,7 @@ const productsRouter = Router();
  *     500:
  *       description: Some server error
  */
-productsRouter.get('/', async (req, res) => {
-    const { limit, page, category, status, sort } = req.query;
-    try {
-        let product = await productsController.getProducts(limit, page, category, status, sort);
-        res.status(201).send({ status: "success", payload: product })
-    }
-    catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-});
+productsRouter.get('/', productsController.getProducts);
 
 /**
  * @swagger
@@ -334,16 +324,7 @@ productsRouter.get('/', async (req, res) => {
  *    500:
  *     description: Some server error
  */
-productsRouter.get('/:pid', async (req, res) => {
-    let id = req.params.pid;
-    try {
-        const product = await productsController.getProductById(id);
-        res.status(201).send({ status: "success", payload: product })
-    }
-    catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-})
+productsRouter.get('/:pid', productsController.getProductById)
 
 /** 
  * @swagger
@@ -371,20 +352,7 @@ productsRouter.get('/:pid', async (req, res) => {
  *    500:
  *     description: Some server error 
  */
-productsRouter.post('/', middlewarePassportJWT, async (req, res, next) => {
-    let user = req.user
-    try {
-        let product = req.body
-        product.owner = user._id
-        product = new isValidProductDTO(product)
-        let prodComplete = await productsController.addProduct(product);
-        console.log(prodComplete)
-        emitter.emit('new-product', prodComplete);
-        res.status(201).send({ status: "success", payload: prodComplete });
-    } catch (err) {
-        next(err);
-    }
-});
+productsRouter.post('/', middlewarePassportJWT, productsController.addProduct);
 
 /**
  * @swagger
@@ -428,16 +396,7 @@ productsRouter.post('/', middlewarePassportJWT, async (req, res, next) => {
  *     description: Some server error
  * 
  */
-productsRouter.put('/:pid', async (req, res, next) => {
-    let id = req.params.pid;
-    try {
-        const pid = await isValidProductIdDTO(id)
-        let prodUpdated = await productsController.updateProduct(pid, req.body);
-        res.status(201).send({ status: "success", payload: prodUpdated });
-    } catch (err) {
-        next(err);
-    }
-});
+productsRouter.put('/:pid', productsController.updateProduct);
 
 /**
  * @swagger
@@ -471,16 +430,6 @@ productsRouter.put('/:pid', async (req, res, next) => {
  *    500:
  *     description: Some server error
 */
-productsRouter.delete('/:pid', middlewarePassportJWT, async (req, res) => {
-    let user = req.user
-    let id = req.params.pid;
-    try {
-        let respuesta = await productsController.deleteProduct(id, user);
-        emitter.emit('new-product', respuesta);
-        res.status(201).send({ status: "success", payload: respuesta });
-    } catch (err) {
-        res.status(500).send({ status: "error", error: err })
-    }
-});
+productsRouter.delete('/:pid', middlewarePassportJWT, productsController.deleteProduct);
 
 export { productsRouter };

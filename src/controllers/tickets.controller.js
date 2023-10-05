@@ -1,70 +1,77 @@
-import TicketsService from '../services/tickets.service.js';
-import ticketDAO from '../dao/mongo/TicketDAO.js';
-import cartsController from './carts.controller.js';
-import productsController from './products.controller.js';
+import ticketsService from '../services/tickets.service.js';
+import cartsService from '../services/carts.service.js';
+import productsService from '../services/products.service.js';
 
-class TicketsController {
+export default class TicketsController {
 	constructor() {
-		this.service = new TicketsService(ticketDAO);
+		this.ticketsService = ticketsService;
+		this.cartsService = cartsService;
+		this.producstervice = productsService;
 	}
 
 	async getTickets() {
-		return await this.service.getTickets();
+		return await this.ticketsService.getTickets();
 	}
 
 	async getTicketById(tid) {
-		return await this.service.getTicketById(tid);
+		return await this.ticketsService.getTicketById(tid);
 	}
 
-	async addTicket(cid, user) {
+	async addTicket(req, res) {
+		let cid = req.params.cid;
+		const user = req.user
 		let productsOk = [];
 		let productsNotOk = [];
 		let totalPrice = 0;
-
-		let cart = await cartsController.getCartById(cid);
-		for (const el of cart.products) {
-			let prod = await productsController.getProductById(el.product._id);
-			if (prod.stock - el.cant >= 0) {
-				prod.stock -= el.cant;
-				await productsController.updateProduct(prod._id, prod);
-				await cartsController.deleteProductFromCart(el.product._id, cid)
-				let prodAuxOk = {
-					title: prod.title,
-					cant: el.cant,
-					price: prod.price
-				};
-				productsOk.push(prodAuxOk);
-			} else {
-				let prodAuxNotOk = {
-					title: prod.title,
-					cant: el.cant,
-					stock: prod.stock,
-					price: prod.price
-				};
-				productsNotOk.push(prodAuxNotOk);
+		try {
+			let cart = await this.cartsService.getCartById(cid);
+			for (const el of cart.products) {
+				let prod = await this.productservice.getProductById(el.product._id);
+				if (prod.stock - el.cant >= 0) {
+					prod.stock -= el.cant;
+					await this.productservice.updateProduct(prod._id, prod);
+					await this.cartsService.deleteProductFromCart(el.product._id, cid)
+					let prodAuxOk = {
+						title: prod.title,
+						cant: el.cant,
+						price: prod.price
+					};
+					productsOk.push(prodAuxOk);
+				} else {
+					let prodAuxNotOk = {
+						title: prod.title,
+						cant: el.cant,
+						stock: prod.stock,
+						price: prod.price
+					};
+					productsNotOk.push(prodAuxNotOk);
+				}
 			}
+			productsOk.forEach(el => {
+				totalPrice += el.cant * el.price
+			})
+
+			const timestamp = Date.now().toString();
+			const ticketCode = `TICKET-${timestamp}`;
+
+			let ticket = {
+				code: ticketCode,
+				amount: totalPrice,
+				purchaser: user.email,
+
+			}
+			ticket = await this.ticketsService.addTicket(ticket);
+			await fetch(`http://localhost:8080/api/mails/ticket/${ticket._id}/`, {
+				method: 'GET'
+			});
+			res.status(201).send({ status: "success", payload: { "ticket": ticket } });
 		}
-		productsOk.forEach(el => {
-			totalPrice += el.cant * el.price
-		})
-
-		const timestamp = Date.now().toString();
-		const ticketCode = `TICKET-${timestamp}`;
-
-		let ticket = {
-			code: ticketCode,
-			amount: totalPrice,
-			purchaser: user.email,
-
+		catch (err) {
+			res.status(500).send({ status: "error", error: err })
 		}
-		ticket = await this.service.addTicket(ticket);
-		await fetch(`http://localhost:8080/api/mails/ticket/${ticket._id}/`, {
-			method: 'GET'
-		});
-		return ticket
 	}
+
 }
 
-const ticketsController = new TicketsController();
 
-export default ticketsController;
+
