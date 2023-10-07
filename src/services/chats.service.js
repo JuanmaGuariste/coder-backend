@@ -1,13 +1,6 @@
-export default class ChatsService {
-	constructor(dao) {
-		this.dao = dao;
-	}
+import ChatsRepository from "../repositories/chats.repository.js";
+import chatDAO from "../dao/mongo/ChatDAO.js";
 
-    async getAllMessages() {
-        return await this.dao.getAllMessages();
-    }
+const chatsService = new ChatsRepository(chatDAO);
 
-    async addMessage(chat) {
-        return await this.dao.addMessage(chat);    
-    }	
-}
+export default chatsService

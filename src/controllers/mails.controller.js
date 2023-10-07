@@ -8,7 +8,6 @@ import bcrypt from 'bcrypt';
 import { hashPassword } from '../utils/encrypt.utils.js';
 import Swal from 'sweetalert2';
 
-
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     port: 587,
@@ -19,7 +18,6 @@ const transporter = nodemailer.createTransport({
 })
 
 export default class MailsController {
-
     async createMail(req, res) {
         let ticketId = req.params.tid;
         try {
@@ -51,6 +49,7 @@ export default class MailsController {
 
             res.status(201).send({ status: "success", payload: ticket });
         } catch (err) {
+            req.logger.error(`Error information: ${err}`);
             res.status(500).send({ status: "error", error: err })
         }
     }
@@ -91,14 +90,14 @@ export default class MailsController {
             }
             res.status(201).send({ status: "success", payload: user });
         } catch (err) {
+            req.logger.error(`Error information: ${err}`);
             res.status(500).send({ status: "error", error: err })
         }
     }
 
     async restorePassword(req, res) {
         let { password } = req.body;
-        let userId = req.params.userId;
-        
+        let userId = req.params.userId;        
         try {
             let user = await usersController.getUserById(userId);
             if (bcrypt.compareSync(password, user.password)) {
@@ -112,6 +111,7 @@ export default class MailsController {
             }
             res.redirect('/login');
         } catch (err) {
+            req.logger.error(`Error information: ${err}`);
             res.redirect('/loginError');
         }
     }

@@ -10,7 +10,7 @@ export default class ProductsController {
 			res.status(201).send({ status: "success", payload: product })
 		}
 		catch (err) {
-			console.log(err)
+			req.logger.error(`Error information: ${err}`);
 			res.status(500).send({ status: "error", error: err })
 		}
 	}
@@ -21,11 +21,18 @@ export default class ProductsController {
 			res.status(201).send({ status: "success", payload: product })
 		}
 		catch (err) {
+			req.logger.error(`Error information: ${err}`);
 			res.status(500).send({ status: "error", error: err })
 		}
 	}
 	async getAllProducts() {
-		return await productsService.getAllProducts();
+		try {
+			let products = await productsService.getAllProducts();
+			res.status(201).send({ status: "success", payload: products })
+		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
+			res.status(500).send({ status: "error", error: err })
+		}
 	}
 
 	async addProduct(req, res, next) {
@@ -39,6 +46,7 @@ export default class ProductsController {
 			emitter.emit('new-product', prodComplete);
 			res.status(201).send({ status: "success", payload: prodComplete });
 		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
 			next(err);
 		}
 	}
@@ -47,7 +55,6 @@ export default class ProductsController {
 		let user = req.user
 		let id = req.params.pid;
 		try {
-
 			let prod = await productsService.getProductById(id);
 			let respuesta = false;
 			if (user.rol == "admin") {
@@ -59,6 +66,7 @@ export default class ProductsController {
 			}
 			res.status(201).send({ status: "success", payload: respuesta });
 		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
 			res.status(500).send({ status: "error", error: err })
 		}
 	}
@@ -70,6 +78,7 @@ export default class ProductsController {
 			let prodUpdated = await productsService.updateProduct(pid, req.body);
 			res.status(201).send({ status: "success", payload: prodUpdated });
 		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
 			next(err);
 		}
 	}

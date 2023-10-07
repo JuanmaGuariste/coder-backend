@@ -21,12 +21,17 @@ export default class UsersController {
 		}).redirect('/products');
 	}
 	async logout(req, res) {
-		let user = req.user
-		user = await usersService.getUserByEmail(user.email);
-		user.last_connection = new Date();
-		await usersService.updateUser(user._id, user);
-		res.clearCookie('token');
-		res.redirect('/login');
+		try {
+			let user = req.user
+			user = await usersService.getUserByEmail(user.email);
+			user.last_connection = new Date();
+			await usersService.updateUser(user._id, user);
+			res.clearCookie('token');
+			res.redirect('/login');
+		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
+			res.status(500).send({ status: "error", error: err })
+		}
 	}
 
 	async login(req, res) {
@@ -46,7 +51,7 @@ export default class UsersController {
 					documents: [],
 					last_connection: new Date(),
 					_id: "coder",
-	
+
 				};
 			} else {
 				user = await usersService.getUserByEmail(email);
@@ -65,6 +70,7 @@ export default class UsersController {
 				maxAge: 6000000,
 			}).redirect('/products');
 		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
 			res.redirect('/loginError');
 		}
 	}
@@ -80,13 +86,13 @@ export default class UsersController {
 			} else if (user.status && (`${userRol.rol}` === "premium")) {
 				user.rol = `${userRol.rol}`;
 			} else if ((!user.status) && (`${userRol.rol}` === "premium")) {
-				res.status(401).send({ status: "error", error: "Primero debe subir los archivos"})
+				res.status(401).send({ status: "error", error: "Primero debe subir los archivos" })
 			}
 			user = await usersService.updateUser(uid, user);
 			res.status(201).send({ status: "success", payload: user.first_name })
 		}
 		catch (err) {
-			req.logger.error(err)
+			req.logger.error(`Error information: ${err}`);
 			res.status(500).send({ status: "error", error: err })
 		}
 	}
@@ -128,39 +134,8 @@ export default class UsersController {
 			res.send("Files uploaded successfully");
 		}
 		catch (err) {
-			console.log(err)
+			req.logger.error(`Error information: ${err}`);
 			res.status(500).send({ status: "error", error: err })
 		}
 	}
 }
-
-
-// class UsersController {
-// 	constructor() {
-// 		this.service = new UsersService(userDAO);
-// 	}
-    
-//     async getAllUsers() {
-// 		return await this.service.getAllUsers();
-// 	}
-
-// 	async createUser(user) {
-// 		return await this.service.createUser(user);
-// 	}
-	
-//     async getUserById(id) {
-// 		return await this.service.getUserById(id);
-// 	}
-
-// 	async getUserByEmail(email) {		
-// 		return await this.service.getUserByEmail(email);
-// 	}
-
-// 	async updateUser(id, user) {
-// 		return await this.service.updateUser(id, user);
-// 	}
-// }
-
-// const usersController = new UsersController();
-
-// export default usersController;

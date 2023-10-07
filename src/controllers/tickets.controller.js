@@ -10,11 +10,23 @@ export default class TicketsController {
 	}
 
 	async getTickets() {
-		return await this.ticketsService.getTickets();
+		try {
+			let tickets = await this.ticketsService.getTickets();
+			res.status(201).send({ status: "success", payload: tickets });
+		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
+			res.status(500).send({ status: "error", error: err })
+		}
 	}
 
 	async getTicketById(tid) {
-		return await this.ticketsService.getTicketById(tid);
+		try {
+			let ticket = await this.ticketsService.getTicketById(tid);
+			res.status(201).send({ status: "success", payload: ticket });
+		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
+			res.status(500).send({ status: "error", error: err })
+		}
 	}
 
 	async addTicket(req, res) {
@@ -67,10 +79,10 @@ export default class TicketsController {
 			res.status(201).send({ status: "success", payload: { "ticket": ticket } });
 		}
 		catch (err) {
+			req.logger.error(`Error information: ${err}`);
 			res.status(500).send({ status: "error", error: err })
 		}
 	}
-
 }
 
 

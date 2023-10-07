@@ -16,7 +16,7 @@ export default class ViewsController {
             });
         }
         catch (err) {
-            console.log(err)
+            req.logger.error(`Error information: ${err}`);
             res.status(500).send({ status: "error", error: err })
         }
     }
@@ -33,6 +33,7 @@ export default class ViewsController {
                     user,
                 });
         } catch (err) {
+            req.logger.error(`Error information: ${err}`);
             res.status(500).send({ status: "error", error: err })
         }
     }
@@ -85,18 +86,24 @@ export default class ViewsController {
     }
 
     async current(req, res) {
-        let user = await usersService.getUserById(req.user._id);
-        if (!user) {
-            user = req.user;
-            res.render('profile', {
-                title: 'Perfil de Usuario',
-                user,
-            });
-        } else {
-            res.render('profile', {
-                title: 'Perfil de Usuario',
-                user,
-            });
+        try {
+            let user = await usersService.getUserById(req.user._id);
+            if (!user) {
+                user = req.user;
+                res.render('profile', {
+                    title: 'Perfil de Usuario',
+                    user,
+                });
+            } else {
+                res.render('profile', {
+                    title: 'Perfil de Usuario',
+                    user,
+                });
+            }
+        }
+        catch (err) {
+            req.logger.error(`Error information: ${err}`);
+            res.status(500).send({ status: "error", error: err })
         }
     }
 
@@ -105,8 +112,8 @@ export default class ViewsController {
         let tokenHash = req.params.token;
         try {
             const jwt = await import('jsonwebtoken');
-            const secretKey = environment.SECRET_KEY;       
-    
+            const secretKey = environment.SECRET_KEY;
+
             jwt.default.verify(tokenHash, secretKey, async (err, decoded) => {
                 if (err) {
                     req.logger.error(err)
@@ -122,25 +129,31 @@ export default class ViewsController {
                     });
                 }
             });
-    
+
         } catch (err) {
+            req.logger.error(`Error information: ${err}`);
             res.status(500).send({ status: "error", error: err })
         }
     }
 
     async userToPremium(req, res) {
-        let user = await usersService.getUserById(req.user._id);
-        if (!user) {
-            user = req.user;
-            res.render('premium', {
-                title: 'Usuario premium',
-                user,
-            });
-        } else {
-            res.render('premium', {
-                title: 'Usuario premium',
-                user,
-            });
+        try {
+            let user = await usersService.getUserById(req.user._id);
+            if (!user) {
+                user = req.user;
+                res.render('premium', {
+                    title: 'Usuario premium',
+                    user,
+                });
+            } else {
+                res.render('premium', {
+                    title: 'Usuario premium',
+                    user,
+                });
+            }
+        } catch (err) {
+            req.logger.error(`Error information: ${err}`);
+            res.status(500).send({ status: "error", error: err })
         }
     }
 }

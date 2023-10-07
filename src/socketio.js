@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
-import productsController from './controllers/products.controller.js';
-import chatsController from './controllers/chats.controller.js';
+import productsService from './services/products.service.js';
+import chatsService from './services/chats.service.js';
 import { logger } from './middleware/logger.middleware.js';
 
 let io;
@@ -20,8 +20,8 @@ const socketio = async () => {
                         let messages = [];
                         io.on("connection", async (socket) => {
                             try {
-                                totalProducts = await productsController.getAllProducts()
-                                messages = await chatsController.getAllMessages()
+                                totalProducts = await productsService.getAllProducts()
+                                messages = await chatsService.getAllMessages()
                             } catch (err) {
                                 logger.error(`${new Date().toISOString()} - Error information: ${err}`);
                             }
@@ -29,7 +29,7 @@ const socketio = async () => {
                             socket.emit('totalProducts', JSON.stringify(totalProducts));
                             socket.on('new-product', async (product) => {
                                 try {
-                                    totalProducts = await productsController.getAllProducts()
+                                    totalProducts = await productsService.getAllProducts()
                                 } catch (err) {
                                     logger.error(err)
                                 }
@@ -37,8 +37,8 @@ const socketio = async () => {
                             });
                             socket.emit('messages', messages);
                             socket.on('message', async (message) => {
-                                await chatsController.addMessage(message)
-                                messages = await chatsController.getAllMessages()
+                                await chatsService.addMessage(message)
+                                messages = await chatsService.getAllMessages()
                                 io.emit('messages', messages);
                             });
                             socket.on('sayhello', (data) => {

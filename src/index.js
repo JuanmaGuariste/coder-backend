@@ -1,6 +1,6 @@
 import cluster from 'cluster';
 import os from 'os';
-import productsController from './controllers/products.controller.js';
+import productsService from './services/products.service.js';
 import { logger } from './middleware/logger.middleware.js';
 import { setupMaster, setupWorker } from '@socket.io/sticky';
 import { createAdapter, setupPrimary } from '@socket.io/cluster-adapter';
@@ -43,7 +43,7 @@ if (cluster.isPrimary) {
     emitter.on ("new-product", async (product) => {
         let totalProducts = [];
         try {
-            totalProducts = await productsController.getAllProducts()
+            totalProducts = await productsService.getAllProducts()
             io.emit('totalProducts', JSON.stringify(totalProducts));
         } catch (err) {
             logger.error(err)

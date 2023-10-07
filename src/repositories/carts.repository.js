@@ -3,15 +3,11 @@ export default class CartRepository {
         this.dao = dao;
     }
 
-    async getAllCarts() {
-        return await this.dao.getAllCarts();
-    }
-
     async getCartById(id) {
         return await this.dao.getCartById(id);
     }
 
-    async addProductToCart(pid, cid) {
+    async addProductToCart(pid, cid) {        
         return await this.dao.addProductToCart(pid, cid);
     }
 
