@@ -42,7 +42,6 @@ export default class ProductsController {
 			product.owner = user._id
 			product = new isValidProductDTO(product)
 			let prodComplete = await productsService.addProduct(product);
-			console.log(prodComplete)
 			emitter.emit('new-product', prodComplete);
 			res.status(201).send({ status: "success", payload: prodComplete });
 		} catch (err) {

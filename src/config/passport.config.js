@@ -13,18 +13,22 @@ const jwtExtract = ExtractJwt;
 const LocalStrategy = local.Strategy;
 
 const generateJWTToken = async (payload) => {
-    const secretKey = environment.SECRET_KEY;
-    const expiresIn = '1h';
-    const jwt = await import('jsonwebtoken')
-    const token = jwt.default.sign(payload, secretKey, { expiresIn });
-    return token;
+    try{
+        const secretKey = environment.SECRET_KEY;
+        const expiresIn = '1h';
+        const jwt = await import('jsonwebtoken')
+        const token = jwt.default.sign(payload, secretKey, { expiresIn });
+        return token;
+    } catch (err) {        
+        throw new Error('Error generating JWT token', err);
+    }
 }
 
 const inicializePassport = () => {
     passport.use("github", new GitHubStrategy({
-        clientID: "Iv1.27225588721570ec",
-        clientSecret: "f7382fc12bf753556a5014fbf4d20a1b37f789db",
-        callbackURL: "http://localhost:8080/api/users/githubcallback"
+        clientID: environment.GITHUB_CLIENT_ID,
+        clientSecret: environment.GITHUB_CREDENTIAL,
+        callbackURL: environment.GITHUB_URL
     }, async (accessToken, refreshToken, profile, done) => {
         try {
             let user = await usersService.getUserByEmail(profile._json.email);
@@ -73,8 +77,7 @@ const inicializePassport = () => {
                 }
                 const newUser = await usersService.createUser(userData);
                 return done(null, newUser);
-            } catch (err) {
-                console.log(err)
+            } catch (err) {                
                 return done(err);
             }
         })
@@ -85,12 +88,16 @@ const inicializePassport = () => {
     });
 
     passport.deserializeUser(async (id, done) => {
-        if (id === "coder") {
-            return done(null, true);
-        } else {
-            const user = await usersService.getUserById(id);
-            if (!user) return done(null, false, { message: 'Usuario no encontrado' });
-            return done(null, user);
+        try{
+            if (id === "coder") {
+                return done(null, true);
+            } else {
+                const user = await usersService.getUserById(id);
+                if (!user) return done(null, false, { message: 'Usuario no encontrado' });
+                return done(null, user);
+            }
+        } catch(err) {
+            throw new Error("error deserializing user", err)
         }
     });
 

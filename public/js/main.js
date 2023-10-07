@@ -15,12 +15,10 @@ async function createCart() {
 }
 
 async function addProductToCart(pid, cid) {
-	console.log(pid)
-	console.log(cid)
 	const response = await fetch(`http://localhost:8080/api/carts/${cid}/product/${pid}`, {
 		method: 'POST'
 	});
-	if (response.status === 403){
+	if (response.status === 403) {
 		Swal.fire({
 			title: 'Error al agregar el producto',
 			text: 'No es posible agregar un producto propio al carrito.',
@@ -71,27 +69,23 @@ async function sendProduct(userId) {
 	product.thumbnail = document.getElementById('thumbnail').value;
 	product.code = document.getElementById('code').value;
 	product.stock = document.getElementById('stock').value;
-	product.status = document.getElementById('status').value;	
+	product.status = document.getElementById('status').value;
 	const response = await fetch(`http://localhost:8080/api/products`, {
 		method: 'POST',
 		body: JSON.stringify(product),
 		headers: {
 			'Content-Type': 'application/json'
-		}		
+		}
 	});
 }
 
 async function deleteProduct() {
-    const prodId = document.getElementById('id').value;
-    try {
-		
-		let response = await fetch(`http://localhost:8080/api/products/${prodId}`, {
-			method: 'DELETE'
-        })		       
-    } catch (error) {
-        console.log('Error al enviar la solicitud de eliminación:', error);
-    }
+	const prodId = document.getElementById('id').value;
+	let response = await fetch(`http://localhost:8080/api/products/${prodId}`, {
+		method: 'DELETE'
+	})
 }
+
 
 async function createTicket(cid) {
 	const response = await fetch(`http://localhost:8080/api/carts/${cid}/purchase`, {

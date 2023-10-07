@@ -31,15 +31,19 @@ const socketio = async () => {
                                 try {
                                     totalProducts = await productsService.getAllProducts()
                                 } catch (err) {
-                                    logger.error(err)
+                                    logger.error(`${new Date().toISOString()} - Error information: ${err}`);
                                 }
                                 io.emit('totalProducts', JSON.stringify(totalProducts));
                             });
                             socket.emit('messages', messages);
                             socket.on('message', async (message) => {
-                                await chatsService.addMessage(message)
-                                messages = await chatsService.getAllMessages()
-                                io.emit('messages', messages);
+                                try {
+                                    await chatsService.addMessage(message)
+                                    messages = await chatsService.getAllMessages()
+                                    io.emit('messages', messages);
+                                } catch (err) {
+                                    logger.error(`${new Date().toISOString()} - Error information: ${err}`);
+                                }
                             });
                             socket.on('sayhello', (data) => {
                                 socket.broadcast.emit('connected', data);

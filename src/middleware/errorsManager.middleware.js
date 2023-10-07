@@ -8,7 +8,7 @@ export function errorsManagerMiddleware(err, req, res, next) {
 	URL: ${req.url}\n
 	IP: [${req.ip}]\n
 	User: ${req.get('user-agent')}\n
-	Error information: ${err.cause}`);
+	Error information: ${err}`);
 
     switch (err.code) {
 		case EErrors.ROUTING_ERROR:

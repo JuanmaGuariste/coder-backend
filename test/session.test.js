@@ -38,7 +38,6 @@ describe('Test de integracion - Sesiones', async () => {
         //     .then((result) => {              
         //         expect(result).to.be.ok
         //     })
-        console.log(result._body)
         // const { _body } = result;
         // userId = _body.payload._id;
         // expect(_body).to.be.ok;

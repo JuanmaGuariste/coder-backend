@@ -11,7 +11,6 @@ class CartDAO {
 
     async addProductToCart(pid, cid) {
         let cart = await this.model.findOne({ _id: cid });
-        console.log(cart)
         const productIndex = cart.products.findIndex(obj => obj.product.toString() === pid);
         if (productIndex !== -1) {
             cart.products[productIndex].cant += 1;

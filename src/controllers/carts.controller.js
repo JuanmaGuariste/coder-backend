@@ -23,7 +23,6 @@ export default class CartsController {
 				return 0
 			}
 			let cart = await cartsService.addProductToCart(pid, cid);
-			console.log(cart)
 			if (!cart) {
 				res.status(403).send({ status: "success", error: "Product owner" })
 				return 0

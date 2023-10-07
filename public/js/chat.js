@@ -17,15 +17,14 @@ Swal.fire({
 });
 
 function render(data) {
-	const html = data
-		.map((elem, index) => {
-			return `<div>
-				<strong>${elem.user}:</strong>
-                <em>${elem.msj}</em>
-            </div>`;
-		})
-		.join(' ');
-	document.getElementById('messages').innerHTML = html;
+	const container = document.getElementById('messages');
+	container.innerHTML = '';
+	data.forEach((elem, index) => {
+		const div = document.createElement('div');
+		const messageText = `${elem.user}: ${elem.msj}`;
+		div.textContent = messageText;
+		container.appendChild(div);
+	});
 }
 
 inputMSJ.addEventListener('keyup', (event) => {
