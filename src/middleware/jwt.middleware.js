@@ -4,14 +4,14 @@ import jwt from "jsonwebtoken";
 const privateKey = 'privateKey';
 
 const authToken = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.cookies.token;
     if (!authHeader){
         res.status(401).send({message: "Token not found"});
     }
 
     const token = authHeader.split(" ")[1];
 
-    jwt.verify(token, privateKey, (err, credentials) => {
+    jwt.verify(authHeader, privateKey, (err, credentials) => {
         if (err){
             res.status(401).send({message: "Token invalid"});
         }
