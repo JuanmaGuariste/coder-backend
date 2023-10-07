@@ -13,3 +13,7 @@ ADMIN_PASSWORD=password
 EMAIL = google account
 EMAIL_PASSWORD = google account password for aplications
 BASE_URL: http://localhost
+SECRET_KEY: insert the secret key
+GITHUB_CREDENTIAL: insert the GitHub Credentials
+GITHUB_URL: Insert the GitHub URL Callback like http://.../api/users/githubcallback
+GITHUB_CLIENT_ID: Insert the GitHub Client ID
