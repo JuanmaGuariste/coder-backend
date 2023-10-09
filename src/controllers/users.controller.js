@@ -77,16 +77,21 @@ export default class UsersController {
 
 	async premium(req, res) {
 		let uid = req.params.uid;
-		let userRol = req.body
+		let userRol = req.body;
 		try {
 			let user = await usersService.getUserById(uid);
-			if ((`${userRol.rol}` === "user")) {
+			if (!user){
+				res.status(401).send({ status: "error", error: "Usuario no encontrado"})
+				return;
+			}
+			if ((`${userRol.rol}` === "user")) {				
 				user.status = false
 				user.rol = `${userRol.rol}`;
 			} else if (user.status && (`${userRol.rol}` === "premium")) {
 				user.rol = `${userRol.rol}`;
 			} else if ((!user.status) && (`${userRol.rol}` === "premium")) {
 				res.status(401).send({ status: "error", error: "Primero debe subir los archivos" })
+				return;
 			}
 			user = await usersService.updateUser(uid, user);
 			res.status(201).send({ status: "success", payload: user.first_name })

@@ -14,8 +14,9 @@
                 <option value="false">false</option>
             </select>
             <button id="send" onclick="sendProduct('{{user._id}}')">Enviar</button>
+            
         </form>
-    </div>
+    </div>    
 
     <div class="form-wrapper">
         <h2 class="form-title">Eliminar un producto por ID:</h2>
@@ -27,7 +28,7 @@
 </div>
 
 <div id="historial">
-    <div id="totalProducts"></div>
+    <div id="totalProducts" class="product-grid"></div>
 </div>
 
 <script src='/socket.io/socket.io.js'></script>

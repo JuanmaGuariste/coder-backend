@@ -7,7 +7,7 @@
         {{#each products.docs}}
         <div class="card my-3 mx-2" style="width: 18rem;">
             <figure class="figure">
-                <img src="https://dummyimage.com/300" class="figure-img img-fluid rounded" alt="Imagen del producto.">
+                <img src='{{this.thumbnail}}' class="figure-img img-fluid rounded" alt="Imagen del producto.">
             </figure>
             <div class="card-body">
                 <h5 class="card-title">{{this.title}}</h5>
@@ -27,6 +27,7 @@
                 {{/if}}
             </div>
         </div>
+        
         {{/each}}
         <div class="d-flex justify-content-center">
             <nav>

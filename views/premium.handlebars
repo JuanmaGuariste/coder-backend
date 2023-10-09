@@ -11,7 +11,7 @@
 		<div class='col-8' style='padding: 50px 20px;'>
 			<h1>Hola, {{user.first_name}} {{user.last_name}}</h1>
 			<p>Carga los siguientes datos para poder ser un usuario premium:</p>
-			<form action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data">
+			<form id="filesForm" action="/api/users/{{user._id}}/documents" method="post" enctype="multipart/form-data">
 				<h4>Identificación</h4>
 				<input type="file" class="form-control" name="identification" id="identification">
 				<h4>Comprobante de domicilio</h4>
@@ -25,10 +25,10 @@
 			{{else}}
 			<h4 class="text-danger my-4">Por favor, ingrese todos los archivos antes de enviar la solicitud.</h4>
 			{{/if}}
-			<form action="/api/users/premium/{{user._id}}" method="post">
-				<input type="hidden" id="rolInput" name="rol" value="premium">
-				<button class="btn btn-warning" type="submit">Enviar solicitud</button>
-			</form>
+			<button class="btn btn-success my-3" onclick="sendInfo('{{user._id}}')">Enviar solicitud</button>
 		</div>
 	</div>
 </section>
+
+<script src="/js/responses_manager.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>

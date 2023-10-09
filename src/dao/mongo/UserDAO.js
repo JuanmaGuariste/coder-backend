@@ -25,7 +25,8 @@ class UserDAO {
     }
 
     async updateUser(id, user) {
-        return await this.model.findByIdAndUpdate(id, user);
+        let user2 = await this.model.findByIdAndUpdate(id, user);
+        return user2;
     }
 }
 

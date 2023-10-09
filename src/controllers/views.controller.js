@@ -7,8 +7,9 @@ import Swal from 'sweetalert2';
 export default class ViewsController {
     async getProducts(req, res) {
         const { limit, page, category, status, sort } = req.query;
-        const user = req.user;
+        let uid = req.user._id
         try {
+            let user = await usersService.getUserById(uid);
             let products = await productsService.getProducts(limit, page, category, status, sort);
             res.render('products', {
                 products,

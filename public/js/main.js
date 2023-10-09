@@ -137,7 +137,7 @@ async function restorePassword() {
 
 socket.on('totalProducts', (data) => {
 	const html = JSON.parse(data).map((elem, index) => {
-		return `<div class="product-container">
+		return `<div class="product-container2">
 		<h2>Producto</h2>
 		<p>ID: ${elem._id}</p>
 		<p>Título: ${elem.title}</p>
