@@ -28,6 +28,11 @@ class UserDAO {
         let user2 = await this.model.findByIdAndUpdate(id, user);
         return user2;
     }
+
+    async deleteUser(id) {
+        let user = await this.model.findByIdAndDelete(id);
+        return user;
+    }
 }
 
 const userDAO = new UserDAO();

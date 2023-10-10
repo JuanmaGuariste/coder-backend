@@ -10,6 +10,8 @@ const userRouter = Router();
 
 userRouter.get('/', userController.getUsers)
 
+userRouter.delete('/', userController.deleteUsers)
+
 userRouter.post(
 	'/',
 	passport.authenticate('register', { failureRedirect: '/registerError' }),

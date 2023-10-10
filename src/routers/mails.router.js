@@ -6,6 +6,8 @@ const mailsRouter = Router();
 
 mailsRouter.get("/ticket/:tid", mailsController.createMail);
 
+mailsRouter.get("/inactiveUsers/:uid", mailsController.inactiveUsers);
+
 mailsRouter.post("/:userEmail", mailsController.restorePasswordMail);
 
 mailsRouter.post("/restore-password/uid/:userId", mailsController.restorePassword);

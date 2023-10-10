@@ -116,5 +116,40 @@ export default class MailsController {
             res.redirect('/loginError');
         }
     }
+
+    async inactiveUsers(req, res) {
+        let uid = req.params.uid;
+        try {
+            let user = await usersService.getUserById(uid);
+            const htmlContent = `
+            <p><strong>Hola, ${user.first_name}. Te informamos que tu cuenta fue eliminada de UpSoon debido a tu inactividad.</p>
+            <p><strong>Tu última conexión fue realizada el día:</strong> ${user.last_connection}</p>
+            <p><strong>Esperamos que vuelvas pronto</p>
+        `;
+            const mailOptions = {
+                from: `UpSoon Ecommerce <${environment.EMAIL}>`,
+                to: environment.EMAIL,//TODO: cambiar por user mail
+                // to: user.EMAIL,
+                subject: 'UpSoon - Eliminado de cuenta por inactividad',
+                html: htmlContent,
+                // attachments: [{
+                //     filename: 'ticket.txt',
+                //     content: htmlContent,
+                // }],
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    req.logger.error(`Error information: ${error}`);
+                }
+                req.logger.info('Email sent: ' + info.response);
+            });
+            await usersService.deleteUser(uid);
+            res.status(201).send({ status: "success", payload: user });
+        } catch (err) {
+            req.logger.error(`Error information: ${err}`);
+            res.status(500).send({ status: "error", error: err })
+        }
+    }
     
 }

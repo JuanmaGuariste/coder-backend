@@ -20,6 +20,25 @@ export default class UsersController {
 		}
 	}
 
+	async deleteUsers(req, res) {
+		try {
+			let users = await usersService.getAllUsers();
+			let currentDate = new Date();
+			const inactivityThreshold = 2880; // 2 días de inactividad
+			const limitDate = new Date(currentDate.getTime() - inactivityThreshold * 60000);
+			const inactiveUsers = users.filter(user => user.last_connection < limitDate);
+			for (const user of inactiveUsers) {				
+				await fetch(`http://localhost:8080/api/mails/inactiveUsers/${user._id}/`, {
+					method: 'GET'
+				});
+			}
+			res.status(201).send({ status: "success", payload: inactiveUsers });
+		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
+			res.status(500).send({ status: "error", error: err })
+		}
+	}
+
 	async github(req, res) { }
 
 	githubCallback(req, res) {
