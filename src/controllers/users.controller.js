@@ -10,6 +10,16 @@ export default class UsersController {
 		res.redirect('/products');
 	}
 
+	async getUsers(req, res) {
+		try {
+			let user = await usersService.getAllUsers();
+			res.status(201).send({ status: "success", payload: user });
+		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
+			res.status(500).send({ status: "error", error: err })
+		}
+	}
+
 	async github(req, res) { }
 
 	githubCallback(req, res) {
@@ -59,15 +69,15 @@ export default class UsersController {
 				if (!user) {
 					return res.redirect('/login');
 				}
-				
+
 				user.last_connection = new Date();
-				await usersService.updateUser(user._id, user);				
+				await usersService.updateUser(user._id, user);
 				if (!bcrypt.compareSync(password, user.password)) {
 					return res.redirect('/loginError');
 				}
 			}
 			const token = jwt.sign({ _id: user._id }, 'privatekey', { expiresIn: '1h' });
-			
+
 			res.cookie('token', token, {
 				httpOnly: true,
 				maxAge: 6000000,
@@ -83,11 +93,11 @@ export default class UsersController {
 		let userRol = req.body;
 		try {
 			let user = await usersService.getUserById(uid);
-			if (!user){
-				res.status(401).send({ status: "error", error: "Usuario no encontrado"})
+			if (!user) {
+				res.status(401).send({ status: "error", error: "Usuario no encontrado" })
 				return;
 			}
-			if ((`${userRol.rol}` === "user")) {				
+			if ((`${userRol.rol}` === "user")) {
 				user.status = false
 				user.rol = `${userRol.rol}`;
 			} else if (user.status && (`${userRol.rol}` === "premium")) {
@@ -115,12 +125,12 @@ export default class UsersController {
 			}
 			if (req.files["profile"]) {
 				user.img = `/profiles/${req.files.profile[0].filename}`;
-			} else if(req.files["products"]){
+			} else if (req.files["products"]) {
 				let product = await productsService.getProductById(pid);
 				product.thumbnail = `/products/${req.files.products[0].filename}`;
 				await productsService.updateProduct(pid, product);
 				product = await productsService.getProductById(pid);
-			} else if (req.files["products"] || req.files["address"] || req.files["account"]){
+			} else if (req.files["products"] || req.files["address"] || req.files["account"]) {
 				const identificationFile = req.files["identification"];
 				const addressFile = req.files["address"];
 				const accountFile = req.files["account"];

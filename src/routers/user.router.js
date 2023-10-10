@@ -8,6 +8,8 @@ const userController = new UsersController();
 
 const userRouter = Router();
 
+userRouter.get('/', userController.getUsers)
+
 userRouter.post(
 	'/',
 	passport.authenticate('register', { failureRedirect: '/registerError' }),

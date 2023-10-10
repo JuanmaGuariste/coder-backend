@@ -18,7 +18,6 @@ export const uploadFile = () => {
                 extencion = ".jpg";
                 cb(null, 'public/profiles');
             } else if (file.fieldname === 'products') {
-                console.log("Estoy en upload.middleware")
                 extencion = ".jpeg";
                 cb(null, 'public/products');
             } else {

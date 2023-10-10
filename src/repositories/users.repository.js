@@ -1,4 +1,5 @@
 import UserDTO from "../dto/users.dto.js";
+import ReducedUserDTO from "../dto/reducedUser.dto.js";
 
 export default class UserRepository {
     constructor(dao) {
@@ -6,7 +7,12 @@ export default class UserRepository {
     }
 
     async getAllUsers() {
-        return await this.dao.getAllUsers();
+        let users = await this.dao.getAllUsers();
+        let reducedUser = [];
+        users.forEach(user => {
+            reducedUser.push(new ReducedUserDTO(user))
+        });
+        return reducedUser
     }
 
     async createUser(user) {
