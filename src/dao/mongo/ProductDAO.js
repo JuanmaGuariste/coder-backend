@@ -29,8 +29,7 @@ class ProductDAO {
             link = link + `&sort=desc`
         }
 
-        let products = await this.model.paginate(filter, options);
-
+        let products = await this.model.paginate(filter, options);        
         if (products.hasNextPage) {
             products.nextLink = link + `&page=${products.nextPage}`
         } else {
@@ -43,7 +42,6 @@ class ProductDAO {
             products.prevLink = null;
         }
 
-        products.category = category;
         products.category = category;
         return products
     }

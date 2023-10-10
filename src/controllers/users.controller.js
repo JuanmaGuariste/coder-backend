@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import environment from "../config/environment.js";
 
 import usersService from '../services/users.service.js';
+import productsService from '../services/products.service.js';
 
 export default class UsersController {
 	async home(req, res) {
@@ -14,7 +15,7 @@ export default class UsersController {
 	githubCallback(req, res) {
 		req.session.user = req.user;
 		let user = req.session.user
-		const token = jwt.sign({ user }, 'privateKey', { expiresIn: '1h' });
+		const token = jwt.sign({ user }, 'privatekey', { expiresIn: '1h' });
 		res.cookie('token', token, {
 			httpOnly: true,
 			maxAge: 6000000,
@@ -55,16 +56,18 @@ export default class UsersController {
 				};
 			} else {
 				user = await usersService.getUserByEmail(email);
-				user.last_connection = new Date();
-				await usersService.updateUser(user._id, user);
 				if (!user) {
-					return res.redirect('/loginError');
+					return res.redirect('/login');
 				}
+				
+				user.last_connection = new Date();
+				await usersService.updateUser(user._id, user);				
 				if (!bcrypt.compareSync(password, user.password)) {
 					return res.redirect('/loginError');
 				}
 			}
-			const token = jwt.sign({ user }, 'privateKey', { expiresIn: '1h' });
+			const token = jwt.sign({ _id: user._id }, 'privatekey', { expiresIn: '1h' });
+			
 			res.cookie('token', token, {
 				httpOnly: true,
 				maxAge: 6000000,
@@ -104,6 +107,7 @@ export default class UsersController {
 
 	async uploadDocuments(req, res) {
 		let uid = req.params.uid;
+		let pid = req.body.productID;
 		try {
 			let user = await usersService.getUserById(uid);
 			if (!user.documents) {
@@ -111,7 +115,12 @@ export default class UsersController {
 			}
 			if (req.files["profile"]) {
 				user.img = `/profiles/${req.files.profile[0].filename}`;
-			} else {
+			} else if(req.files["products"]){
+				let product = await productsService.getProductById(pid);
+				product.thumbnail = `/products/${req.files.products[0].filename}`;
+				await productsService.updateProduct(pid, product);
+				product = await productsService.getProductById(pid);
+			} else if (req.files["products"] || req.files["address"] || req.files["account"]){
 				const identificationFile = req.files["identification"];
 				const addressFile = req.files["address"];
 				const accountFile = req.files["account"];

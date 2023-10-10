@@ -43,7 +43,7 @@ export default class ProductsController {
 			product = new isValidProductDTO(product)
 			let prodComplete = await productsService.addProduct(product);
 			emitter.emit('new-product', prodComplete);
-			res.status(201).send({ status: "success", payload: prodComplete });
+			res.status(201).send({ status: "success", payload: product });
 		} catch (err) {
 			req.logger.error(`Error information: ${err}`);
 			next(err);
@@ -54,12 +54,12 @@ export default class ProductsController {
 		let user = req.user
 		let id = req.params.pid;
 		try {
-			let prod = await productsService.getProductById(id);
+			let prod = await productsService.getProductById(id);	
 			let respuesta = false;
 			if (user.rol == "admin") {
 				respuesta = await productsService.deleteProduct(id);
 				emitter.emit('new-product', respuesta);
-			} else if ((user.rol == "premium") && (`${prod.owner}` === user._id)) {
+			} else if ((user.rol == "premium") && (`${prod.owner}` === `${user._id}`)) {
 				respuesta = await productsService.deleteProduct(id);
 				emitter.emit('new-product', respuesta);
 			}

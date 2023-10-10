@@ -39,6 +39,7 @@ userRouter.post('/:uid/documents',
 		{ name: "address", maxCount: 1 },
 		{ name: "account", maxCount: 1 },
 		{ name: "profile", maxCount: 1 },
+		{ name: "products", maxCount: 1 },
 	]),
 	userController.uploadDocuments
 	);

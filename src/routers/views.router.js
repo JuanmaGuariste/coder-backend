@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import { middlewarePassportJWT } from '../middleware/jwt.middleware.js';
-import { isUser, isAdmin } from '../middleware/auth.middleware.js';
+import { isAdmin } from '../middleware/auth.middleware.js';
 import ViewsController from '../controllers/views.controller.js';
 
 const viewsController = new ViewsController();
 const viewsRouter = Router();
 
-viewsRouter.get('/products', middlewarePassportJWT, viewsController.getProducts);
+viewsRouter.get('/products', middlewarePassportJWT,  viewsController.getProducts);
+
+viewsRouter.get('/myProducts', middlewarePassportJWT, viewsController.myProducts);
 
 viewsRouter.get("/carts/:cid", middlewarePassportJWT,viewsController.getCartById);
 

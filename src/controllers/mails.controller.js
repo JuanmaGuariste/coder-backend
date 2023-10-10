@@ -1,7 +1,7 @@
-import ticketsController from '../controllers/tickets.controller.js';
+import ticketsService from '../services/tickets.service.js';
 import nodemailer from 'nodemailer';
 import environment from '../config/environment.js';
-import usersController from './users.controller.js';
+import usersService from '../services/users.service.js';
 import { logger } from '../middleware/logger.middleware.js';
 import { generateJWTToken } from '../config/passport.config.js';
 import bcrypt from 'bcrypt';
@@ -21,7 +21,7 @@ export default class MailsController {
     async createMail(req, res) {
         let ticketId = req.params.tid;
         try {
-            let ticket = await ticketsController.getTicketById(ticketId);
+            let ticket = await ticketsService.getTicketById(ticketId);
             const htmlContent = `
             <h1>Detalles del Ticket</h1>
             <p><strong>Código del Ticket:</strong> ${ticket.code}</p>
@@ -57,9 +57,10 @@ export default class MailsController {
     async restorePasswordMail(req, res) {
         let userEmail = req.params.userEmail;
         try {
-            let user = await usersController.getUserByEmail(userEmail);
+            let user = await usersService.getUserByEmail(userEmail);
             if (!user) {
                 logger.error(`El usuario no existe: ${user}`);
+                return res.status(401).send({ status: "error", error: "El usuario no existe" });
             } else {
                 let tokenParams = {
                     userId: user._id,
@@ -99,7 +100,7 @@ export default class MailsController {
         let { password } = req.body;
         let userId = req.params.userId;        
         try {
-            let user = await usersController.getUserById(userId);
+            let user = await usersService.getUserById(userId);
             if (bcrypt.compareSync(password, user.password)) {
                 req.logger.error(`No se puede utilizar la misma contraseña`);
             } else {
@@ -107,7 +108,7 @@ export default class MailsController {
                 let newUser = {
                     password: hashedPassword,
                 }
-                user = await usersController.updateUser(userId, newUser);
+                user = await usersService.updateUser(userId, newUser);
             }
             res.redirect('/login');
         } catch (err) {

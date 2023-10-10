@@ -2,16 +2,11 @@ import ticketsService from '../services/tickets.service.js';
 import cartsService from '../services/carts.service.js';
 import productsService from '../services/products.service.js';
 
-export default class TicketsController {
-	constructor() {
-		this.ticketsService = ticketsService;
-		this.cartsService = cartsService;
-		this.producstervice = productsService;
-	}
+export default class TicketsController {	
 
 	async getTickets() {
 		try {
-			let tickets = await this.ticketsService.getTickets();
+			let tickets = await ticketsService.getTickets();
 			res.status(201).send({ status: "success", payload: tickets });
 		} catch (err) {
 			req.logger.error(`Error information: ${err}`);
@@ -21,7 +16,7 @@ export default class TicketsController {
 
 	async getTicketById(tid) {
 		try {
-			let ticket = await this.ticketsService.getTicketById(tid);
+			let ticket = await ticketsService.getTicketById(tid);
 			res.status(201).send({ status: "success", payload: ticket });
 		} catch (err) {
 			req.logger.error(`Error information: ${err}`);
@@ -36,13 +31,13 @@ export default class TicketsController {
 		let productsNotOk = [];
 		let totalPrice = 0;
 		try {
-			let cart = await this.cartsService.getCartById(cid);
+			let cart = await cartsService.getCartById(cid);
 			for (const el of cart.products) {
-				let prod = await this.productservice.getProductById(el.product._id);
+				let prod = await productsService.getProductById(el.product._id);
 				if (prod.stock - el.cant >= 0) {
 					prod.stock -= el.cant;
-					await this.productservice.updateProduct(prod._id, prod);
-					await this.cartsService.deleteProductFromCart(el.product._id, cid)
+					await productsService.updateProduct(prod._id, prod);
+					await cartsService.deleteProductFromCart(el.product._id, cid)
 					let prodAuxOk = {
 						title: prod.title,
 						cant: el.cant,
@@ -72,7 +67,7 @@ export default class TicketsController {
 				purchaser: user.email,
 
 			}
-			ticket = await this.ticketsService.addTicket(ticket);
+			ticket = await ticketsService.addTicket(ticket);
 			await fetch(`http://localhost:8080/api/mails/ticket/${ticket._id}/`, {
 				method: 'GET'
 			});

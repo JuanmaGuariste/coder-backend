@@ -1,6 +1,6 @@
-import TicketsRepository from "../repositories/products.repository.js";
+import TicketsRepository from "../repositories/tickets.repository.js";
 import ticketDAO from "../dao/mongo/TicketDAO.js";
 
-const ticketsRepository = new TicketsRepository(ticketDAO);
+const ticketsService = new TicketsRepository(ticketDAO);
 
-export default ticketsRepository
+export default ticketsService

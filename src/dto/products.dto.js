@@ -1,7 +1,6 @@
 import CustomErrors from '../tools/CustomErrors.js';
 import EErrors from '../tools/EErrors.js';
 import { generateProductErrorInfo, generateIDErrorInfo } from '../tools/info.js';
-import productsController from '../controllers/products.controller.js';
 import mongoose from 'mongoose';
 
 class isValidProductDTO {
@@ -19,13 +18,13 @@ class isValidProductDTO {
         this.description = product.description;
         this.category = product.category;
         this.price = product.price;
-        this.thumbnail = product.thumbnail;
         this.code = product.code;
+        this.thumbnail = product.thumbnail;
         this.stock = product.stock;
         this.status = product.status;
         this.owner = product.owner;
 
-        if (!this.title || !this.description || !this.category || !this.price || !this.thumbnail || !this.code || !this.stock || !this.status || !this.owner) {
+        if (!this.title || !this.description || !this.category || !this.price || !this.code || !this.stock || !this.status || !this.owner) {
             throw CustomErrors.createError({
                 name: "Product Creation Error",
                 cause: generateProductErrorInfo(product),

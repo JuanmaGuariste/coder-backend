@@ -1,19 +1,19 @@
 import passport from "passport";
 import jwt from "jsonwebtoken";
+import usersService from "../services/users.service.js";
 
-const privateKey = 'privateKey';
+const privateKey = 'privatekey';
 
 const authToken = (req, res, next) => {
     const authHeader = req.cookies.token;
     if (!authHeader){
-        res.status(401).send({message: "Token not found"});
+        return res.status(401).send({message: "Token not found"});
     }
 
-    const token = authHeader.split(" ")[1];
-
-    jwt.verify(authHeader, privateKey, (err, credentials) => {
+    const token = authHeader.split(" ")[1];    
+    jwt.verify(token, privateKey, (err, credentials) => {
         if (err){
-            res.status(401).send({message: "Token invalid"});
+            return res.status(401).send({message: "Token invalid"});
         }
         req.user = credentials.user;
         next();
@@ -21,14 +21,14 @@ const authToken = (req, res, next) => {
 } 
 
 const middlewarePassportJWT = async (req, res, next) => {
-	passport.authenticate('jwt', { session: false }, (err, usr, info) => {        
+	passport.authenticate('jwt', { session: false }, async (err, usr, info) => {        
 		if (err) {
 			next(err);
 		}
 		if (!usr) {
-			res.redirect('/login');
+			return res.redirect('/login');
 		}
-		req.user = usr;        
+		req.user = await usersService.getUserById(usr); 
 		next();
 	})(req, res, next);
 };

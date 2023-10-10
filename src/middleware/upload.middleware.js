@@ -1,4 +1,5 @@
 import multer from 'multer';
+import crypto from 'crypto';
 
 export const uploadFile = () => {
     let extencion;
@@ -16,12 +17,18 @@ export const uploadFile = () => {
             } else if (file.fieldname === 'profile') {
                 extencion = ".jpg";
                 cb(null, 'public/profiles');
+            } else if (file.fieldname === 'products') {
+                console.log("Estoy en upload.middleware")
+                extencion = ".jpeg";
+                cb(null, 'public/products');
             } else {
                 cb(new Error('Campo de archivo no válido'), null);
             }
         },
         filename: function (req, file, cb) {
-            cb(null, file.fieldname + "-" + req.user._id + extencion);
+            const randomString = crypto.randomBytes(8).toString('hex');
+            const filename = file.fieldname + "-" + randomString + extencion;
+            cb(null, filename);
         },
     });
     return multer({ storage });

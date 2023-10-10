@@ -13,13 +13,13 @@ const jwtExtract = ExtractJwt;
 const LocalStrategy = local.Strategy;
 
 const generateJWTToken = async (payload) => {
-    try{
+    try {
         const secretKey = environment.SECRET_KEY;
         const expiresIn = '1h';
         const jwt = await import('jsonwebtoken')
         const token = jwt.default.sign(payload, secretKey, { expiresIn });
         return token;
-    } catch (err) {        
+    } catch (err) {
         throw new Error('Error generating JWT token', err);
     }
 }
@@ -77,7 +77,7 @@ const inicializePassport = () => {
                 }
                 const newUser = await usersService.createUser(userData);
                 return done(null, newUser);
-            } catch (err) {                
+            } catch (err) {
                 return done(err);
             }
         })
@@ -88,7 +88,7 @@ const inicializePassport = () => {
     });
 
     passport.deserializeUser(async (id, done) => {
-        try{
+        try {
             if (id === "coder") {
                 return done(null, true);
             } else {
@@ -96,7 +96,7 @@ const inicializePassport = () => {
                 if (!user) return done(null, false, { message: 'Usuario no encontrado' });
                 return done(null, user);
             }
-        } catch(err) {
+        } catch (err) {
             throw new Error("error deserializing user", err)
         }
     });
@@ -106,10 +106,10 @@ const inicializePassport = () => {
         new jwtStrategy(
             {
                 jwtFromRequest: jwtExtract.fromExtractors([cookieExtractor]),
-                secretOrKey: 'privateKey',
+                secretOrKey: 'privatekey',
             },
             (payload, done) => {
-                done(null, payload.user);
+                done(null, payload._id);
             }
         ),
         async (payload, done) => {

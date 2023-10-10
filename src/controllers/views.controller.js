@@ -9,10 +9,40 @@ export default class ViewsController {
         const { limit, page, category, status, sort } = req.query;
         let uid = req.user._id
         try {
+            if (!uid) {
+                return res.redirect('/login')
+            }
             let user = await usersService.getUserById(uid);
             let products = await productsService.getProducts(limit, page, category, status, sort);
             res.render('products', {
                 products,
+                user,
+            });
+        }
+        catch (err) {
+            req.logger.error(`Error information: ${err}`);
+            res.status(500).send({ status: "error", error: err })
+        }
+    }
+
+    async myProducts(req, res) {
+        const { limit, page, category, status, sort } = req.query;
+        let uid = req.user._id
+        try {
+            let user = await usersService.getUserById(uid);
+            let products = await productsService.getProducts(limit, page, category, status, sort);
+            let filteredProducts = []
+            products.docs.forEach(element => {
+                if (`${element.owner}` == uid) {
+                    filteredProducts.push(element)
+                }
+            });
+            const userProducts = {
+                docs: filteredProducts,
+                totalDocs: filteredProducts.length,
+            };
+            res.render('myProducts', {
+                userProducts,
                 user,
             });
         }

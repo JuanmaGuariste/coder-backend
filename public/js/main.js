@@ -66,17 +66,32 @@ async function sendProduct(userId) {
 	product.description = document.getElementById('description').value;
 	product.category = document.getElementById('category').value;
 	product.price = document.getElementById('price').value;
-	product.thumbnail = document.getElementById('thumbnail').value;
 	product.code = document.getElementById('code').value;
 	product.stock = document.getElementById('stock').value;
 	product.status = document.getElementById('status').value;
-	const response = await fetch(`http://localhost:8080/api/products`, {
+	product.owner = userId;
+	let response = await fetch(`http://localhost:8080/api/products`, {
 		method: 'POST',
 		body: JSON.stringify(product),
 		headers: {
 			'Content-Type': 'application/json'
 		}
-	});
+	})
+	if (response.ok) {
+		Swal.fire({
+			title: 'Producto agregadocorrectamente',
+			text: 'Dirigete a "Mis productos" para verlo',
+			icon: 'success'
+		})
+			.then(() => {
+				window.location.reload();
+			})
+	} else {
+		Swal.fire({
+			title: 'Error al intentar agregar el producto',
+			icon: 'error'
+		});
+	}
 }
 
 async function deleteProduct() {
@@ -84,6 +99,26 @@ async function deleteProduct() {
 	let response = await fetch(`http://localhost:8080/api/products/${prodId}`, {
 		method: 'DELETE'
 	})
+}
+
+async function deleteOwnProduct(pid) {
+	let response = await fetch(`http://localhost:8080/api/products/${pid}`, {
+		method: 'DELETE'
+	})
+	if (response.ok) {
+		Swal.fire({
+			title: 'Producto eliminado correctamente',
+			icon: 'success'
+		})
+			.then(() => {
+				window.location.reload();
+			})
+	} else {
+		Swal.fire({
+			title: 'Error al intentar eliminar el producto',
+			icon: 'error'
+		});
+	}
 }
 
 
@@ -98,7 +133,7 @@ async function createTicket(cid) {
 			icon: 'success'
 		})
 			.then(() => {
-				window.location.reload();
+				window.location.href = '/products';
 			})
 	} else {
 		Swal.fire({
@@ -136,20 +171,20 @@ async function restorePassword() {
 }
 
 socket.on('totalProducts', (data) => {
-	const html = JSON.parse(data).map((elem, index) => {
-		return `<div class="product-container2">
-		<h2>Producto</h2>
-		<p>ID: ${elem._id}</p>
-		<p>Título: ${elem.title}</p>
-		<p>Descripción: ${elem.description}</p>
-		<p>Categoría: ${elem.category}</p>
-		<p>Precio: ${elem.price}</p>
-		<p>Thumbnail: ${elem.thumbnail}</p>
-		<p>Código: ${elem.code}</p>
-		<p>Stock: ${elem.stock}</p>
-		<p>Estado: ${elem.status}</p>
-		<p>Dueño: ${elem.owner}</p>
-	</div>`;
+	const html = JSON.parse(data).map((elem, index) => {		
+			return `<div class="product-container2">
+			<h2>Producto</h2>
+			<p>ID: ${elem._id}</p>
+			<p>Título: ${elem.title}</p>
+			<p>Descripción: ${elem.description}</p>
+			<p>Categoría: ${elem.category}</p>
+			<p>Precio: ${elem.price}</p>
+			<p>Thumbnail: ${elem.thumbnail}</p>
+			<p>Código: ${elem.code}</p>
+			<p>Stock: ${elem.stock}</p>
+			<p>Estado: ${elem.status}</p>
+			<p>Dueño: ${elem.owner}</p>
+		</div>`;		
 	});
 	document.getElementById('totalProducts').innerHTML = html.join('');
 });
