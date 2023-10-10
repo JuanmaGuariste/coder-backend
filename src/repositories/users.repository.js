@@ -24,6 +24,10 @@ export default class UserRepository {
             return null
         } else {
             let user = await this.dao.getUserById(id);
+            if (!user){
+                return null            
+            }
+
             return new UserDTO(user)
         }
     }

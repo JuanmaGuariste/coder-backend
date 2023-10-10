@@ -27,12 +27,23 @@ export default class UsersController {
 			const inactivityThreshold = 2880; // 2 días de inactividad
 			const limitDate = new Date(currentDate.getTime() - inactivityThreshold * 60000);
 			const inactiveUsers = users.filter(user => user.last_connection < limitDate);
-			for (const user of inactiveUsers) {				
+			for (const user of inactiveUsers) {
 				await fetch(`http://localhost:8080/api/mails/inactiveUsers/${user._id}/`, {
 					method: 'GET'
 				});
 			}
 			res.status(201).send({ status: "success", payload: inactiveUsers });
+		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
+			res.status(500).send({ status: "error", error: err })
+		}
+	}
+
+	async deleteUser(req, res) {
+		let uid = req.params.uid;
+		try {
+			let user = await usersService.deleteUser(uid);
+			res.status(201).send({ status: "success", payload: user });
 		} catch (err) {
 			req.logger.error(`Error information: ${err}`);
 			res.status(500).send({ status: "error", error: err })
@@ -129,6 +140,30 @@ export default class UsersController {
 			res.status(201).send({ status: "success", payload: user.first_name })
 		}
 		catch (err) {
+			req.logger.error(`Error information: ${err}`);
+			res.status(500).send({ status: "error", error: err })
+		}
+	}
+
+	async setUser(req, res) {
+		let uid = req.params.uid;
+		let rol = req.params.rol;
+		try {
+			let user = await usersService.getUserById(uid);
+			if (!user) {
+				res.status(401).send({ status: "error", error: "Usuario no encontrado" })
+				return;
+			}
+			if (`${rol}` == "user"){
+				user.status = false;
+				user.rol = `${rol}`;				
+			} else if ((`${rol}` == "premium" )||  (`${rol}` == "admin" )){
+				user.status = true;
+				user.rol = `${rol}`;;	
+			}
+			user = await usersService.updateUser(uid, user);
+			res.status(201).send({ status: "success", payload: user.first_name })
+		} catch (err) {
 			req.logger.error(`Error information: ${err}`);
 			res.status(500).send({ status: "error", error: err })
 		}

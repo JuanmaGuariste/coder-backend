@@ -7,6 +7,7 @@ import { generateJWTToken } from '../config/passport.config.js';
 import bcrypt from 'bcrypt';
 import { hashPassword } from '../utils/encrypt.utils.js';
 import Swal from 'sweetalert2';
+import productsService from '../services/products.service.js';
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -48,6 +49,46 @@ export default class MailsController {
             });
 
             res.status(201).send({ status: "success", payload: ticket });
+        } catch (err) {
+            req.logger.error(`Error information: ${err}`);
+            res.status(500).send({ status: "error", error: err })
+        }
+    }
+
+    async deleteProductMail(req, res) {
+        let pid = req.params.pid;
+        try {            
+            let product = await productsService.getProductById(`${pid}`); 
+             let user = await usersService.getUserById(`${product.owner}`);
+             
+            const htmlContent = `
+            <p><strong>Hola, ${user.first_name}. Te informamos que tu producto "${product.title}" fue eliminada de UpSoon.</p>   
+            <h1>Detalles del producto</h1>
+            <p><strong>Descripción:</strong> ${product.description}</p>
+            <p><strong>Categoría:</strong> ${product.category}</p>
+            <p><strong>Stock:</strong> ${product.stock}</p>
+            <p><strong>Precio: </strong>$${product.price}</p>         
+        `;
+            const mailOptions = {
+                from: `UpSoon Ecommerce <${environment.EMAIL}>`,
+                to: environment.EMAIL,//TODO: cambiar por user mail
+                // to: user.EMAIL,
+                subject: 'UpSoon - Producto eliminado',
+                html: htmlContent,
+                // attachments: [{
+                //     filename: 'ticket.txt',
+                //     content: htmlContent,
+                // }],
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    req.logger.error(`Error information: ${error}`);
+                }
+                req.logger.info('Email sent: ' + info.response);
+            });
+            product = await productsService.deleteProduct(pid);
+            res.status(201).send({ status: "success", payload: product });
         } catch (err) {
             req.logger.error(`Error information: ${err}`);
             res.status(500).send({ status: "error", error: err })

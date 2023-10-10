@@ -6,6 +6,8 @@ const mailsRouter = Router();
 
 mailsRouter.get("/ticket/:tid", mailsController.createMail);
 
+mailsRouter.get("/deleteproduct/:pid", mailsController.deleteProductMail);
+
 mailsRouter.get("/inactiveUsers/:uid", mailsController.inactiveUsers);
 
 mailsRouter.post("/:userEmail", mailsController.restorePasswordMail);

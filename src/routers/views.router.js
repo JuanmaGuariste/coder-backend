@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { middlewarePassportJWT } from '../middleware/jwt.middleware.js';
 import { isAdmin } from '../middleware/auth.middleware.js';
+import { isAdminOrPremium } from '../middleware/auth.middleware.js';
 import ViewsController from '../controllers/views.controller.js';
 
 const viewsController = new ViewsController();
@@ -12,7 +13,7 @@ viewsRouter.get('/myProducts', middlewarePassportJWT, viewsController.myProducts
 
 viewsRouter.get("/carts/:cid", middlewarePassportJWT,viewsController.getCartById);
 
-viewsRouter.get('/realtimeproducts', middlewarePassportJWT, isAdmin, viewsController.realTimeProducts);
+viewsRouter.get('/realtimeproducts', middlewarePassportJWT, isAdminOrPremium, viewsController.realTimeProducts);
 
 viewsRouter.get('/chat', middlewarePassportJWT, viewsController.chats);
 
@@ -31,5 +32,9 @@ viewsRouter.get('/current', middlewarePassportJWT, viewsController.current);
 viewsRouter.get("/restore-password/uid/:uid/token/:token", viewsController.restorePassword)
 
 viewsRouter.get('/premium', middlewarePassportJWT, viewsController.userToPremium);
+
+viewsRouter.get('/allUsers', middlewarePassportJWT, isAdmin, viewsController.allUsers);
+
+viewsRouter.get('/prevPurchase', middlewarePassportJWT, viewsController.prevPurchase);
 
 export default viewsRouter;

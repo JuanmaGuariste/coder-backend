@@ -1,6 +1,8 @@
 import { emitter } from '../emiter.js';
 import { isValidProductDTO, isValidProductIdDTO } from '../dto/products.dto.js';
 import productsService from '../services/products.service.js';
+import MailsController from './mails.controller.js';
+import usersService from '../services/users.service.js';
 
 export default class ProductsController {
 	async getProducts(req, res) {
@@ -55,9 +57,18 @@ export default class ProductsController {
 		let id = req.params.pid;
 		try {
 			let prod = await productsService.getProductById(id);	
+			let productOwner = await usersService.getUserById(`${prod.owner}`)			
 			let respuesta = false;
 			if (user.rol == "admin") {
-				respuesta = await productsService.deleteProduct(id);
+				// respuesta = await productsService.deleteProduct(id);
+				if (productOwner) {
+					await fetch(`http://localhost:8080/api/mails/deleteproduct/${id}/`, {
+						method: 'GET'
+					});
+					respuesta = true
+				} else {
+					respuesta = await productsService.deleteProduct(id);
+				}
 				emitter.emit('new-product', respuesta);
 			} else if ((user.rol == "premium") && (`${prod.owner}` === `${user._id}`)) {
 				respuesta = await productsService.deleteProduct(id);

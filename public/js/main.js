@@ -121,6 +121,46 @@ async function deleteOwnProduct(pid) {
 	}
 }
 
+async function deleteUser(uid) {
+	let response = await fetch(`http://localhost:8080/api/users/${uid}`, {
+		method: 'DELETE'
+	})
+	if (response.ok) {
+		Swal.fire({
+			title: 'Usuario eliminado correctamente',
+			icon: 'success'
+		})
+			.then(() => {
+				window.location.reload();
+			})
+	} else {
+		Swal.fire({
+			title: 'Error al intentar eliminar el usuario',
+			icon: 'error'
+		});
+	}
+}
+
+async function setUser(uid, user) {
+	const response = await fetch(`http://localhost:8080/api/users/${uid}/rol/${user}`, {
+		method: 'POST'
+	});
+	if (response.ok) {
+		Swal.fire({
+			title: 'Rol de usuario actualizado',
+			icon: 'succes'
+		})
+			.then(() => {
+				window.location.reload();
+			})
+	} else {
+		Swal.fire({
+			title: 'Error al cambiar el rol del usuario',
+			icon: 'error'
+		});
+	}
+}
+
 
 async function createTicket(cid) {
 	const response = await fetch(`http://localhost:8080/api/carts/${cid}/purchase`, {
@@ -171,8 +211,8 @@ async function restorePassword() {
 }
 
 socket.on('totalProducts', (data) => {
-	const html = JSON.parse(data).map((elem, index) => {		
-			return `<div class="product-container2">
+	const html = JSON.parse(data).map((elem, index) => {
+		return `<div class="product-container2">
 			<h2>Producto</h2>
 			<p>ID: ${elem._id}</p>
 			<p>Título: ${elem.title}</p>
@@ -184,7 +224,7 @@ socket.on('totalProducts', (data) => {
 			<p>Stock: ${elem.stock}</p>
 			<p>Estado: ${elem.status}</p>
 			<p>Dueño: ${elem.owner}</p>
-		</div>`;		
+		</div>`;
 	});
 	document.getElementById('totalProducts').innerHTML = html.join('');
 });

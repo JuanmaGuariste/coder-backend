@@ -13,6 +13,11 @@ class TicketDAO {
         return await this.model.findOne({ _id: tid });
     }  
 
+    async getTicketByEmail(email) {
+        // return await this.model.findOne({ purchaser: email });
+        return await this.model.findOne({ purchaser: email }).populate('products.product').lean();
+    }  
+
     async addTicket(ticket) {        
         return await this.model.create(ticket);
     }

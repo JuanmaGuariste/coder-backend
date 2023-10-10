@@ -3,14 +3,17 @@ import passport from "passport";
 import { uploadFile } from "../middleware/upload.middleware.js";
 import { middlewarePassportJWT } from '../middleware/jwt.middleware.js';
 import UsersController from "../controllers/users.controller.js";
+import { isAdmin } from "../middleware/auth.middleware.js";
 
 const userController = new UsersController();
 
 const userRouter = Router();
 
-userRouter.get('/', userController.getUsers)
+userRouter.get('/', middlewarePassportJWT, isAdmin, userController.getUsers)
 
-userRouter.delete('/', userController.deleteUsers)
+userRouter.delete('/', middlewarePassportJWT, isAdmin, userController.deleteUsers)
+
+userRouter.delete('/:uid', middlewarePassportJWT, isAdmin, userController.deleteUser)
 
 userRouter.post(
 	'/',
@@ -35,6 +38,8 @@ userRouter.post('/logout', middlewarePassportJWT, userController.logout);
 userRouter.post('/login', userController.login);
 
 userRouter.post('/premium/:uid', userController.premium);
+
+userRouter.post('/:uid/rol/:rol', middlewarePassportJWT, isAdmin, userController.setUser);
 
 userRouter.post('/:uid/documents',
 	middlewarePassportJWT,

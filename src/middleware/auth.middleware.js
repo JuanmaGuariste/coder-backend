@@ -20,8 +20,15 @@ export function isUser(req, res, next) {
 		res.redirect('/');
 	}
 }
-export function isAdmin(req, res, next) {	
+export function isAdminOrPremium(req, res, next) {	
 	if ((req.user.rol === 'admin' ||req.user.rol === 'premium')) {
+		next();
+	} else {
+		res.redirect('/');
+	}
+}
+export function isAdmin(req, res, next) {	
+	if ((req.user.rol === 'admin')) {
 		next();
 	} else {
 		res.redirect('/');

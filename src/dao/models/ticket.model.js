@@ -15,6 +15,18 @@ const ticketSchema = mongoose.Schema({
 		required: true,
 		index: true,
 	},	
+	products: {
+		type: [
+			{
+				product: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: 'products',
+				},
+				cant: Number,
+			},
+		],
+		default: [],
+	},
 });
 
 ticketSchema.set('timestamps',{

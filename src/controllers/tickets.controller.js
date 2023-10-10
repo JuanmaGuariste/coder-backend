@@ -1,6 +1,7 @@
 import ticketsService from '../services/tickets.service.js';
 import cartsService from '../services/carts.service.js';
 import productsService from '../services/products.service.js';
+import _ from 'mongoose-paginate-v2';
 
 export default class TicketsController {	
 
@@ -17,6 +18,16 @@ export default class TicketsController {
 	async getTicketById(tid) {
 		try {
 			let ticket = await ticketsService.getTicketById(tid);
+			res.status(201).send({ status: "success", payload: ticket });
+		} catch (err) {
+			req.logger.error(`Error information: ${err}`);
+			res.status(500).send({ status: "error", error: err })
+		}
+	}
+	async getTicketByEmail(uEmail) {
+		try {
+
+			let ticket = await ticketsService.getTicketByEmail(uEmail);
 			res.status(201).send({ status: "success", payload: ticket });
 		} catch (err) {
 			req.logger.error(`Error information: ${err}`);
@@ -41,7 +52,8 @@ export default class TicketsController {
 					let prodAuxOk = {
 						title: prod.title,
 						cant: el.cant,
-						price: prod.price
+						price: prod.price,
+						_id: prod._id
 					};
 					productsOk.push(prodAuxOk);
 				} else {
@@ -54,10 +66,13 @@ export default class TicketsController {
 					productsNotOk.push(prodAuxNotOk);
 				}
 			}
-			productsOk.forEach(el => {
-				totalPrice += el.cant * el.price
-			})
 
+			let productsID =[];
+
+			productsOk.forEach(el => {
+				totalPrice += el.cant * el.price;
+				productsID.push(el._id);
+			})			
 			const timestamp = Date.now().toString();
 			const ticketCode = `TICKET-${timestamp}`;
 
@@ -65,7 +80,7 @@ export default class TicketsController {
 				code: ticketCode,
 				amount: totalPrice,
 				purchaser: user.email,
-
+				products: productsID
 			}
 			ticket = await ticketsService.addTicket(ticket);
 			await fetch(`http://localhost:8080/api/mails/ticket/${ticket._id}/`, {
