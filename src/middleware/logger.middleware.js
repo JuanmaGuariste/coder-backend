@@ -1,5 +1,4 @@
 import winston from 'winston';
-import environment from '../config/environment.js';
 import customLevelsOptions from '../utils/customLevelsOptions.js';
 
 let logger = winston.createLogger({
@@ -21,7 +20,7 @@ let logger = winston.createLogger({
 }
 );
 
-if (environment.ENVIRONMENT === 'development') {
+if (process.env.ENVIRONMENT === 'development') {
     logger = winston.createLogger({
         levels: customLevelsOptions.levels,
         transports: [

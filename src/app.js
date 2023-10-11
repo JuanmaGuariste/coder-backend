@@ -11,7 +11,6 @@ import { inicializePassport } from './config/passport.config.js';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import sessionsRouter from './routers/sessions.router.js';
-import environment from './config/environment.js';
 import { mailsRouter } from './routers/mails.router.js';
 import { mockingProductsRouter } from './routers/mockingproducts.router.js';
 import { errorsManagerMiddleware } from './middleware/errorsManager.middleware.js';
@@ -40,14 +39,14 @@ inicializePassport(app);
 
 app.use(passport.initialize());
 
-mongoose.connect(environment.MONGO_URL);
+mongoose.connect(process.env.MONGO_URL);
 
 const spects = swaggerJsDoc(swaggerOptions);
 
 app.use(
 	session({
 		store: MongoStore.create({
-			mongoUrl: environment.MONGO_URL,
+			mongoUrl: process.env.MONGO_URL,
 			mongoOptions: {
 				useNewUrlParser: true,
 			},

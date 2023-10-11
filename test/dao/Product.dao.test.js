@@ -1,10 +1,9 @@
 import Assert from 'assert';
 import productDAO from '../../src/dao/mongo/ProductDAO.js';
 import mongoose from 'mongoose';
-import environment from '../../src/config/environment.js';
 import chai from 'chai';
 
-await mongoose.connect(environment.MONGO_URL);
+await mongoose.connect(process.env.MONGO_URL);
 const productDao = productDAO;
 const expect = chai.expect;
 const assert = Assert.strict

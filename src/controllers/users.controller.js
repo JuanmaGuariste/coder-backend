@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from "bcrypt";
-import environment from "../config/environment.js";
 
 import usersService from '../services/users.service.js';
 import productsService from '../services/products.service.js';
@@ -79,7 +78,7 @@ export default class UsersController {
 		const { email, password } = req.body;
 		let user = {};
 		try {
-			if (email === environment.ADMIN_NAME && password === environment.ADMIN_PASSWORD) {
+			if (email === process.env.ADMIN_NAME && password === process.env.ADMIN_PASSWORD) {
 				user = {
 					first_name: "Coder",
 					last_name: "House",
