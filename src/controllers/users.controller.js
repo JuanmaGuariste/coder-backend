@@ -55,7 +55,7 @@ export default class UsersController {
 	githubCallback(req, res) {
 		req.session.user = req.user;
 		let user = req.session.user
-		const token = jwt.sign({ user }, 'privatekey', { expiresIn: '1h' });
+		const token = jwt.sign({ _id: user._id }, 'privatekey', { expiresIn: '1h' });
 		res.cookie('token', token, {
 			httpOnly: true,
 			maxAge: 6000000,
