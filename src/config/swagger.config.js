@@ -8,7 +8,7 @@ export const swaggerOptions = {
 		},
 		servers: [
 			{
-				url: 'http://localhost:8080',
+				url: 'https://upsoon.up.railway.app',
 			},
 			{
 				url: 'http://api-uat.upsoon.com',
